@@ -1,0 +1,33 @@
+{
+  "name": "sedaya-web",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/app.mjs",
+    "start:dev": "nodemon src/app.mjs",
+    "test": "jest --setupFiles dotenv/config -i",
+    "test:watch": "jest --setupFiles dotenv/config --watch -i",
+    "migrate": "node-pg-migrate",
+    "migrate:test": "node-pg-migrate -f config/database/test.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "jest": "^30.0.0"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "nanoid": "^3.3.11",
+    "node-pg-migrate": "^8.0.2",
+    "pg": "^8.16.0"
+  },
+  "type": "module"
+}
