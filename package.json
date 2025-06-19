@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "node src/app.mjs",
-    "start:dev": "nodemon src/app.mjs",
+    "start": "node src/app.js",
+    "start:dev": "nodemon src/app.js",
     "test": "jest --setupFiles dotenv/config -i",
     "test:watch": "jest --setupFiles dotenv/config --watch -i",
     "migrate": "node-pg-migrate",
