@@ -16,7 +16,7 @@ describe('AddUserUseCase', () => {
     const mockUserRepository = new UserRepository();
     const mockPasswordHash = new PasswordHash();
 
-    mockUserRepository.verifyAvailableUseraneme = jest.fn()
+    mockUserRepository.verifyAvailableUsername = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockUserRepository.verifyAvailableEmail = jest.fn()
       .mockImplementation(() => Promise.resolve());
@@ -39,7 +39,7 @@ describe('AddUserUseCase', () => {
     const registeredUser = await addUserUseCase.execute(useCasePayload);
 
     // Assert
-    expect(mockUserRepository.verifyAvailableUseraneme)
+    expect(mockUserRepository.verifyAvailableUsername)
       .toHaveBeenCalledWith(useCasePayload.username);
     expect(mockUserRepository.verifyAvailableEmail)
       .toHaveBeenCalledWith(useCasePayload.email);

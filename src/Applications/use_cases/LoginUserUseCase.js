@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-expressions */
-import LoginUser from '../../Domains/users/entities/LoginUser';
-import NewAuthentication from '../../Domains/authentications/entities/NewAuth';
+import LoginUser from '../../Domains/users/entities/LoginUser.js';
+import NewAuthentication from '../../Domains/authentications/entities/NewAuth.js';
 
 export default class LoginUserUseCase {
   constructor({

@@ -64,7 +64,6 @@ describe('JwtTokenManager', () => {
       // Arrange
       const jwtTokenManager = new JwtTokenManager(Jwt);
       const refreshToken = await jwtTokenManager.createRefreshToken({ username: 'userapp' });
-      console.log('Refresh Token:', refreshToken);
 
       // Action & Assert
       await expect(jwtTokenManager.verifyRefreshToken(refreshToken))

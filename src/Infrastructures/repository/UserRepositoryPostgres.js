@@ -1,6 +1,6 @@
-import InvariantError from '../../Commons/exceptions/InvariantError';
-import RegisteredUser from '../../Domains/users/entities/RegisteredUser';
-import UserRepository from '../../Domains/users/UserRepository';
+import InvariantError from '../../Commons/exceptions/InvariantError.js';
+import RegisteredUser from '../../Domains/users/entities/RegisteredUser.js';
+import UserRepository from '../../Domains/users/UserRepository.js';
 
 class UserRepositoryPostgres extends UserRepository {
   constructor(pool, idGenerator) {
@@ -23,6 +23,33 @@ class UserRepositoryPostgres extends UserRepository {
     const result = await this._pool.query(query);
 
     return new RegisteredUser({ ...result.rows[0] });
+  }
+
+  
+  async verifyAvailableUsername(username) {
+    const query = {
+      text: 'SELECT username FROM users WHERE username = $1',
+      values: [username],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount) {
+      throw new InvariantError('username tidak tersedia');
+    }
+  }
+
+  async verifyAvailableEmail(email) {
+    const query = {
+      text: 'SELECT email FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount) {
+      throw new InvariantError('email tidak tersedia');
+    }
   }
 }
 

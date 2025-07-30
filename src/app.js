@@ -1,18 +1,16 @@
-import express from 'express';
+/* eslint-disable import/extensions */
 import 'dotenv/config';
+import createServer from './Infrastructures/http/CreateServer.js';
+import container from './Infrastructures/container.js';
 
-const app = express();
+const { PORT = 3000, HOST = 'localhost' } = process.env;
 
-// env variables
-const { PORT } = process.env;
-const { HOST } = process.env;
+const start = async () => {
+  const app = await createServer(container);
+  app.listen(PORT, HOST, () => {
+    console.log(`Server running at http://${HOST}:${PORT}`);
+  });
+};
 
-// routes
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
+start();
 
-// start server
-app.listen(PORT, HOST, () => {
-  console.log(`Server is running at http://${HOST}:${PORT}`);
-});

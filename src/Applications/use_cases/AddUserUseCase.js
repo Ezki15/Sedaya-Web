@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import RegisterUser from '../../Domains/users/entities/RegisterUser';
+import RegisterUser from '../../Domains/users/entities/RegisterUser.js';
 
 class AddUserUseCase {
   constructor({ userRepository, passwordHash }) {
@@ -10,7 +10,7 @@ class AddUserUseCase {
   async execute(useCasePayload) {
     const registerUser = new RegisterUser(useCasePayload);
 
-    await this._userRepository.verifyAvailableUseraneme(registerUser.username);
+    await this._userRepository.verifyAvailableUsername(registerUser.username);
     await this._userRepository.verifyAvailableEmail(registerUser.email);
     registerUser.password = await this._passwordHash.hash(registerUser.password);
     return this._userRepository.addUser(registerUser);
