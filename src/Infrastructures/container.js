@@ -18,15 +18,15 @@ import BcryptPasswordHash from './security/BcryptPasswordHash.js';
 import AuthenticationRepository from '../Domains/authentications/AuthenticationRepository.js';
 import AuthenticationRepositoryPostgres from './repository/AuthenticationRepositoryPostgres.js';
 import JwtTokenManager from './security/JwtTokenManager.js';
+import AuthenticationTokenManager from '../Applications/security/AuthenticationTokenManager.js';
 
 // use case
 // Users
 import AddUserUseCase from '../Applications/use_cases/AddUserUseCase.js';
-import LoginUserUseCase from '../Applications/use_cases/LoginUserUseCase.js';
-import LogoutUserUseCase from '../Applications/use_cases/LogoutUserUseCase.js';
-import AuthenticationTokenManager from '../Applications/security/AuthenticationTokenManager.js';
 
 // Authentication
+import LoginUserUseCase from '../Applications/use_cases/LoginUserUseCase.js';
+import LogoutUserUseCase from '../Applications/use_cases/LogoutUserUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -67,7 +67,7 @@ container.register([
     },
   },
   {
-    key: AuthenticationTokenManager,
+    key: AuthenticationTokenManager.name,
     Class: JwtTokenManager,
     parameter: {
       dependencies: [
@@ -111,6 +111,10 @@ container.register([
         {
           name: 'authenticationRepository',
           internal: AuthenticationRepository.name,
+        },
+        {
+          name: 'authenticationTokenManager',
+          internal: AuthenticationTokenManager.name,
         },
         {
           name: 'passwordHash',

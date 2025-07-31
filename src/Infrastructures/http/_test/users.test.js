@@ -13,7 +13,7 @@ describe('/users endpoint', () => {
     await UsersTableTestHelper.cleanTable();
   });
 
-  describe('when POST /auth/users', () => {
+  describe('when POST /auth/users/register', () => {
     it('should response 201 and persisted user', async () => {
       // Arrange
       const requestPayload = {
@@ -27,7 +27,7 @@ describe('/users endpoint', () => {
 
       // Action
       const response = await request(server)
-        .post('/auth/users')
+        .post('/auth/users/register')
         .send(requestPayload);
 
       //  Assert
@@ -50,7 +50,7 @@ describe('/users endpoint', () => {
 
       // Action
     const response = await request(server)
-        .post('/auth/users')
+        .post('/auth/users/register')
         .send(requestPayload);
 
       // Assert
@@ -73,7 +73,7 @@ describe('/users endpoint', () => {
 
       // Action
       const response = await request(server)
-        .post('/auth/users')
+        .post('/auth/users/register')
         .send(requestPayload);
 
       // Assert
@@ -95,7 +95,7 @@ describe('/users endpoint', () => {
 
       // Action
      const response = await request(server)
-        .post('/auth/users')
+        .post('/auth/users/register')
         .send(requestPayload);
 
       // Assert
@@ -117,7 +117,7 @@ describe('/users endpoint', () => {
 
       // Action
       const response = await request(server)
-        .post('/auth/users')
+        .post('/auth/users/register')
         .send(requestPayload);
 
       // Assert
@@ -140,7 +140,7 @@ describe('/users endpoint', () => {
 
       // Action
       const response = await request(server)
-        .post('/auth/users')
+        .post('/auth/users/register')
         .send(requestPayload);
 
       // Assert

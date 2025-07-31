@@ -51,6 +51,32 @@ class UserRepositoryPostgres extends UserRepository {
       throw new InvariantError('email tidak tersedia');
     }
   }
+
+  async getPasswordByEmail(email) {
+    const query = {
+      text: 'SELECT password FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new InvariantError('email tidak ditemukan');
+    }
+    return result.rows[0].password;
+  }
+
+  async getIdByEmail(email) {
+    const query = {
+      text: 'SELECT id FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new InvariantError('email tidak ditemukan');
+    }
+    return result.rows[0].id;
+  }
 }
 
 export default UserRepositoryPostgres;

@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 import AddUserUseCase from '../../Applications/use_cases/AddUserUseCase.js';
 
 class UsersController {

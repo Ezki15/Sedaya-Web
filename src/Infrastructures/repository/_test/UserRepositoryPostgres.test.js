@@ -74,5 +74,47 @@ describe('UserRepositoryPostgres', () => {
     });
   });
 
+  describe('getPasswordByEmail function', () => {
+    it('should throw InvariantError when email not found', async () => {
+      // Arrange
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.getPasswordByEmail('user@gmail.com')).rejects.toThrow(InvariantError);
+    });
+    it('should return password when email found', async () => {
+      // Arrange
+      const user = await UsersTableTestHelper.addUser({ email: 'user@gmail.com', password: 'Rahasia' });
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action
+      const password = await userRepositoryPostgres.getPasswordByEmail('user@gmail.com');
+
+      // Assert
+      expect(password).toBe('Rahasia');
+    });
+
+  describe('getIdByEmail function', () => {
+    it('should throw InvariantError when email not found', async () => {
+      // Arrange
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.getIdByEmail('user@gmail.com')).rejects.toThrow(InvariantError);
+    });
+
+    it('should return user id when email found', async () => {
+      // Arrange
+      const user = await UsersTableTestHelper.addUser({ email: 'user@gmail.com', id: 'user-123' });
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action
+      const userId = await userRepositoryPostgres.getIdByEmail('user@gmail.com');
+
+      // Assert
+      expect(userId).toBe('user-123');
+      });
+    });
+  });
 
 });

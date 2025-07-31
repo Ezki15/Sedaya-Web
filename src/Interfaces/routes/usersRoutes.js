@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 import { Router } from 'express';
 import UsersController from '../controllers/usersController.js';
 
@@ -8,7 +6,7 @@ const usersRoutes = (container) => {
   const router = Router();
   const usersController = new UsersController(container);
 
-  router.post('/auth/users', usersController.postRegisterUser);
+  router.post('/auth/users/register', usersController.postRegisterUser);
 
   return router;
 };
