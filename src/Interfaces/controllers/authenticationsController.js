@@ -1,5 +1,6 @@
 import LoginUserUseCase from '../../Applications/use_cases/LoginUserUseCase.js';
 import RefreshAuthenticationUseCase from '../../Applications/use_cases/RefreshAuthenticationUseCase.js';
+import LogoutUserUseCase from '../../Applications/use_cases/LogoutUserUseCase.js';
 
 class AuthenticationsController {
   constructor(container) {
@@ -7,6 +8,7 @@ class AuthenticationsController {
 
     this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
     this.putAuthenticationHandler = this.putAuthenticationHandler.bind(this);
+    this.deleteAuthenticationHandler = this.deleteAuthenticationHandler.bind(this);
   }
 
   async postAuthenticationHandler(req, res) {
@@ -20,6 +22,12 @@ class AuthenticationsController {
     const accessToken = await refreshAuthenticationUseCase.execute(req.body);
 
     return res.status(200).json({status: 'success', data: accessToken});
+  }
+
+  async deleteAuthenticationHandler(req, res){
+    const logoutUserUserCase = this._container.getInstance(LogoutUserUseCase.name);
+    await logoutUserUserCase.execute(req.body);
+    return res.status(200).json({status: 'success'});
   }
 }
 
