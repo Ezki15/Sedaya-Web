@@ -20,6 +20,7 @@ import AuthenticationRepositoryPostgres from './repository/AuthenticationReposit
 import JwtTokenManager from './security/JwtTokenManager.js';
 import AuthenticationTokenManager from '../Applications/security/AuthenticationTokenManager.js';
 
+
 // use case
 // Users
 import AddUserUseCase from '../Applications/use_cases/AddUserUseCase.js';
@@ -27,6 +28,7 @@ import AddUserUseCase from '../Applications/use_cases/AddUserUseCase.js';
 // Authentication
 import LoginUserUseCase from '../Applications/use_cases/LoginUserUseCase.js';
 import LogoutUserUseCase from '../Applications/use_cases/LogoutUserUseCase.js';
+import RefreshAuthenticationUseCase from '../Applications/use_cases/RefreshAuthenticationUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -119,6 +121,23 @@ container.register([
         {
           name: 'passwordHash',
           internal: PasswordHash.name,
+        },
+      ],
+    },
+  },
+  {
+    key: RefreshAuthenticationUseCase.name,
+    Class: RefreshAuthenticationUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'authenticationRepository',
+          internal: AuthenticationRepository.name,
+        },
+        {
+          name: 'authenticationTokenManager',
+          internal: AuthenticationTokenManager.name,
         },
       ],
     },

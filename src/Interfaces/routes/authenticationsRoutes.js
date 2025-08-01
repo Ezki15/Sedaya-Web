@@ -6,7 +6,8 @@ const authenticationsRoutes = (container) => {
     const router = Router();
     const authController = new authenticationsController(container);
     
-    router.post('/auth/login', authController.postLoginUser);
+    router.post('/authentications', authController.postAuthenticationHandler);
+    router.put('/authentications', authController.putAuthenticationHandler);
     
     return router;
 }
