@@ -8,10 +8,11 @@ const UserTableTestHelper = {
     username = 'userapp',
     email = 'user@gmail.com',
     password = 'Rahasia',
+    role = 'user',
   }) {
     const query = {
-      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5)',
-      values: [id, fullname, username, email, password],
+      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5, $6)',
+      values: [id, fullname, username, email, password, role],
     };
 
     await pool.query(query);

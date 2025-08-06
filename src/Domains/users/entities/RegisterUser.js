@@ -5,13 +5,14 @@ class RegisterUser {
     this._verifyPayload(payload);
 
     const {
-      fullname, username, email, password,
+      fullname, username, email, password, role,
     } = payload;
 
     this.fullname = fullname;
     this.username = username;
     this.email = email;
     this.password = password;
+    this.role = role || 'user'; // Default role is 'user'
   }
 
   _verifyPayload({

@@ -16,6 +16,14 @@ describe('/authentications endpoint', () => {
     await AuthenticationsTableTestHelper.cleanTable();
   });
 
+  const addUserPayload = {
+          fullname: 'User App',
+          username: 'userapp',
+          email: 'user@gmail.com',
+          password: 'secretpassword',
+          role: 'user',
+  };
+
   describe('when POST /authentication ', () => {
     it('should response 201 and new authentication', async () => {
       // Arrange
@@ -27,12 +35,7 @@ describe('/authentications endpoint', () => {
       // add user
       await request(server)
         .post('/auth/users/register')
-        .send({
-          fullname: 'User App',
-          username: 'userapp',
-          email: 'user@gmail.com',
-          password: 'secretpassword',
-        });
+        .send(addUserPayload);
 
       // Action
       const response = await request(server)
@@ -56,12 +59,7 @@ describe('/authentications endpoint', () => {
       // add user
       await request(server)
         .post('/auth/users/register')
-        .send({
-          fullname: 'User App',
-          username: 'userapp',
-          email: 'user@gmail.com',
-          password: 'secretpassword',
-        });
+        .send(addUserPayload);
 
       // Action
       const response = await request(server)
@@ -85,12 +83,7 @@ describe('/authentications endpoint', () => {
       // add user
       await request(server)
         .post('/auth/users/register')
-        .send({
-          fullname: 'User App',
-          username: 'userapp',
-          email: 'user@gmail.com',
-          password: 'secretpassword',
-        });
+        .send(addUserPayload);
 
       // Action
       const response = await request(server)
@@ -113,12 +106,7 @@ describe('/authentications endpoint', () => {
       // add user
       await request(server)
         .post('/auth/users/register')
-        .send({
-          fullname: 'User App',
-          username: 'userapp',
-          email: 'user@gmail.com',
-          password: 'secretpassword',
-        });
+        .send(addUserPayload);
 
       // Action
       const response = await request(server)
@@ -142,12 +130,7 @@ describe('/authentications endpoint', () => {
       // add user
       await request(server)
         .post('/auth/users/register')
-        .send({
-          fullname: 'User App',
-          username: 'userapp',
-          email: 'user@gmail.com',
-          password: 'secretpassword',
-        });
+        .send(addUserPayload);
 
       // Action
       const response = await request(server)
@@ -169,12 +152,7 @@ describe('/authentications endpoint', () => {
       // add user
       await request(server)
         .post('/auth/users/register')
-        .send({
-          fullname: 'User App',
-          username: 'userapp',
-          email: 'user@gmail.com',
-          password: 'secretpassword',
-        });
+        .send(addUserPayload);
 
      // login user
       const loginResponse = await request(server)

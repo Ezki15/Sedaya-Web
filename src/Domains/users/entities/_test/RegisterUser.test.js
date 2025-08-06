@@ -72,4 +72,28 @@ describe('a RegisterUser entities', () => {
     expect(email).toEqual(payload.email);
     expect(password).toEqual(payload.password);
   });
+
+  it('should create resgisterUser object correctly with admin role', () => {
+    // Arrange
+    const payload = {
+      fullname: 'name-123',
+      username: 'username',
+      email: 'email123@gmail.com',
+      password: 'pass-123',
+      role: 'admin',
+    };
+
+    // Action
+    const {
+      fullname, username, email, password, role
+    } = new RegisterUser(payload);
+
+    // Assert
+    expect(fullname).toEqual(payload.fullname);
+    expect(username).toEqual(payload.username);
+    expect(email).toEqual(payload.email);
+    expect(password).toEqual(payload.password);
+    expect(role).toEqual(payload.role);
+    expect(role).toEqual('admin'); // Ensure role is set to 'admin'
+  });
 });

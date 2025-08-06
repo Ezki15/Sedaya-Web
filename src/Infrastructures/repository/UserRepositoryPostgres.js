@@ -11,13 +11,13 @@ class UserRepositoryPostgres extends UserRepository {
 
   async addUser(registerUser) {
     const {
-      fullname, username, email, password,
+      fullname, username, email, password, role
     } = registerUser;
     const id = `user-${this._idGenerator()}`;
 
     const query = {
-      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5) RETURNING id, fullname, username',
-      values: [id, fullname, username, email, password],
+      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5, $6) RETURNING id, fullname, username',
+      values: [id, fullname, username, email, password, role],
     };
 
     const result = await this._pool.query(query);
