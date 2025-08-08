@@ -23,8 +23,8 @@ class NewProduct {
       throw new Error('NEW_PRODUCT.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
 
-    if (stock < 0) {
-      throw new Error('NEW_PRODUCT.STOCK_VALUE_SHOULD_NOT_BE_NEGATIVE');
+    if (stock < 0 || price < 0) {
+      throw new Error('NEW_PRODUCT.STOCK_AND_PRICE_VALUE_SHOULD_NOT_BE_NEGATIVE');
     }
   }
 }

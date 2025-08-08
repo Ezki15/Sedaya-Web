@@ -31,6 +31,21 @@ class ProductRepositoryPostgres extends ProductRepository {
       name: result.rows[0].name,
     };
   }
+
+  async getProducts() {
+    const query = {
+      text: 'SELECT id, name, description, price, stock FROM products',
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      price: row.price,
+      stock: row.stock,
+    }));
+  }
 }
 
 export default ProductRepositoryPostgres;

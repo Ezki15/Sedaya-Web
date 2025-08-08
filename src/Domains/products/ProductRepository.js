@@ -11,6 +11,10 @@ class ProductRepository {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
+  async getProducts() {
+    throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
   async getProductById() {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }

@@ -137,13 +137,13 @@ describe(' /products endpoint', () => {
     expect(response.statusCode).toEqual(400);
     expect(responseJson.status).toEqual('fail');
   });
-  it('should response 400 when request payload has negative stock', async () => {
+  it('should response 400 when request payload has negative price and stock', async () => {
     // Arrange
     await UserTableTestHelper.addUser({ role: 'admin' });
     const requestPayload = {
       name: 'Product E',
       description: 'Description of Product E',
-      price: 50000,
+      price: -50000,
       stock: -5, // negative stock
     };
     const server = await createServer(container);

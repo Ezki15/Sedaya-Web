@@ -31,12 +31,12 @@ describe('a new product entities', () => {
     const payload = {
       name: 'Televisi',
       description: 'Televisi amoled new gen',
-      price: 20000000,
+      price: -20000000,
       stock: -20,
     };
 
     // Action and Assert
-    expect(() => new NewProduct(payload)).toThrow('NEW_PRODUCT.STOCK_VALUE_SHOULD_NOT_BE_NEGATIVE');
+    expect(() => new NewProduct(payload)).toThrow('NEW_PRODUCT.STOCK_AND_PRICE_VALUE_SHOULD_NOT_BE_NEGATIVE');
   });
 
   it('should create newThread object correctly', () => {
