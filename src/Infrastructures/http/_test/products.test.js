@@ -160,4 +160,24 @@ describe(' /products endpoint', () => {
     expect(response.statusCode).toEqual(400);
     expect(responseJson.status).toEqual('fail');
   });
+
+  describe('when GET /products', () => {
+    it('should return all products correctly', async () => {
+      // Arrange
+      await ProductsTableTestHelper.addProduct({});
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .get('/products')
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+  });
 });

@@ -42,8 +42,8 @@ class ProductRepositoryPostgres extends ProductRepository {
       id: row.id,
       name: row.name,
       description: row.description,
-      price: row.price,
-      stock: row.stock,
+      price: Number(row.price),
+      stock: Number(row.stock),
     }));
   }
 }

@@ -78,7 +78,6 @@ describe('ProductRepositoryPostgres', () => {
 
       // Action
       const products = await productRepository.getProducts();
-      console.log(products);
 
       // Assert
       expect(products).toHaveLength(2);

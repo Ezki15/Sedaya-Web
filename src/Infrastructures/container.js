@@ -35,6 +35,7 @@ import RefreshAuthenticationUseCase from '../Applications/use_cases/RefreshAuthe
 
 // products
 import AddProductUseCase from '../Applications/use_cases/AddProductUseCase.js';
+import GetProductsUseCase from '../Applications/use_cases/GetProductsUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -174,6 +175,19 @@ container.register([
   {
     key: AddProductUseCase.name,
     Class: AddProductUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'productRepository',
+          internal: ProductRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: GetProductsUseCase.name,
+    Class: GetProductsUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [
