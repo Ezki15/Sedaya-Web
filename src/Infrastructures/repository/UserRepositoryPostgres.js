@@ -11,7 +11,7 @@ class UserRepositoryPostgres extends UserRepository {
 
   async addUser(registerUser) {
     const {
-      fullname, username, email, password, role
+      fullname, username, email, password, role,
     } = registerUser;
     const id = `user-${this._idGenerator()}`;
 
@@ -25,7 +25,6 @@ class UserRepositoryPostgres extends UserRepository {
     return new RegisteredUser({ ...result.rows[0] });
   }
 
-  
   async verifyAvailableUsername(username) {
     const query = {
       text: 'SELECT username FROM users WHERE username = $1',
@@ -76,6 +75,19 @@ class UserRepositoryPostgres extends UserRepository {
       throw new InvariantError('email tidak ditemukan');
     }
     return result.rows[0].id;
+  }
+
+  async verifyAdmin(userId) {
+    const query = {
+      text: 'SELECT role FROM users WHERE id = $1 ',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount === 0 || result.rows[0].role !== 'admin') {
+      throw new InvariantError('hak akses dibatasi');
+    }
   }
 }
 

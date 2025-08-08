@@ -54,7 +54,6 @@ describe('UserRepositoryPostgres', () => {
     });
   });
 
-
   describe('verifyAvailableEmail function', () => {
     it('should throw InvariantError when email not available', async () => {
       // Arrange
@@ -84,7 +83,7 @@ describe('UserRepositoryPostgres', () => {
     });
     it('should return password when email found', async () => {
       // Arrange
-      const user = await UsersTableTestHelper.addUser({ email: 'user@gmail.com', password: 'Rahasia' });
+      await UsersTableTestHelper.addUser({ email: 'user@gmail.com', password: 'Rahasia' });
       const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
 
       // Action
@@ -94,27 +93,46 @@ describe('UserRepositoryPostgres', () => {
       expect(password).toBe('Rahasia');
     });
 
-  describe('getIdByEmail function', () => {
-    it('should throw InvariantError when email not found', async () => {
+    describe('getIdByEmail function', () => {
+      it('should throw InvariantError when email not found', async () => {
       // Arrange
-      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+        const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
 
-      // Action & Assert
-      await expect(userRepositoryPostgres.getIdByEmail('user@gmail.com')).rejects.toThrow(InvariantError);
-    });
+        // Action & Assert
+        await expect(userRepositoryPostgres.getIdByEmail('user@gmail.com')).rejects.toThrow(InvariantError);
+      });
 
-    it('should return user id when email found', async () => {
+      it('should return user id when email found', async () => {
       // Arrange
-      const user = await UsersTableTestHelper.addUser({ email: 'user@gmail.com', id: 'user-123' });
-      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+        await UsersTableTestHelper.addUser({ email: 'user@gmail.com', id: 'user-123' });
+        const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
 
-      // Action
-      const userId = await userRepositoryPostgres.getIdByEmail('user@gmail.com');
+        // Action
+        const userId = await userRepositoryPostgres.getIdByEmail('user@gmail.com');
 
-      // Assert
-      expect(userId).toBe('user-123');
+        // Assert
+        expect(userId).toBe('user-123');
       });
     });
   });
 
+  describe('verifyAdmin function', () => {
+    it('should throw error when user is not admin', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({});
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.verifyAdmin('user-123')).rejects.toThrow(InvariantError);
+    });
+
+    it('shouldnot throw error when user is admin', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ role: 'admin' });
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.verifyAdmin('user-123')).resolves.not.toThrow(InvariantError);
+    });
+  });
 });

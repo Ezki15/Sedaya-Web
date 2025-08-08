@@ -1,13 +1,14 @@
 /* eslint-disable consistent-return */
+/* istanbul ignore file */
+
 function authenticationMiddleware(tokenManager) {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     try {
       const authHeader = req.headers.authorization;
-      console.log('Authentication Middleware:', authHeader);
       if (!authHeader) throw new Error('AUTHENTICATION.MISSING_TOKEN');
 
-      const token = authHeader.replace('Bearer ', '');
-      const payload = tokenManager.verifyToken(token);
+      const token = await authHeader.replace('Bearer ', '');
+      const payload = await tokenManager.decodePayload(token);
 
       req.auth = payload; // inject ke request untuk digunakan downstream
       next();

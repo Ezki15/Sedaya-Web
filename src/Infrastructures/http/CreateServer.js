@@ -3,6 +3,7 @@
 import express from 'express';
 import errorHandler from '../../Interfaces/middlewares/errorHanlder.js';
 import authenticationMiddleware from '../../Interfaces/middlewares/authMiddleware.js';
+import AuthenticationTokenManager from '../../Applications/security/AuthenticationTokenManager.js';
 import usersRoutes from '../../Interfaces/routes/usersRoutes.js';
 import authenticationsRoutes from '../../Interfaces/routes/authenticationsRoutes.js';
 import productsRoutes from '../../Interfaces/routes/productsRoutes.js';
@@ -26,9 +27,6 @@ const createServer = async (container) => {
 
   // Error handling middleware
   server.use(errorHandler);
-
-  // Aurhorization Middleware
-  server.use(authenticationMiddleware(container.getInstance('tokenManager')));
 
   return server;
 };

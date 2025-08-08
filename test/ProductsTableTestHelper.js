@@ -33,10 +33,10 @@ const ProductsTableTestHelper = {
     return result.rows;
   },
 
-  async generateMockToken() {
+  async generateMockToken(id = 'user-123', username = 'userapp') {
     const payload = {
-      id: 'user-123',
-      username: 'testuser',
+      id,
+      username,
     };
     return Jwt.sign(payload, process.env.ACCESS_TOKEN_KEY);
   },

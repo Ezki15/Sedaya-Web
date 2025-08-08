@@ -26,6 +26,19 @@ describe('a new product entities', () => {
     expect(() => new NewProduct(payload)).toThrow('NEW_PRODUCT.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
+  it('should throw error when stock value is negative', () => {
+    // Arrange
+    const payload = {
+      name: 'Televisi',
+      description: 'Televisi amoled new gen',
+      price: 20000000,
+      stock: -20,
+    };
+
+    // Action and Assert
+    expect(() => new NewProduct(payload)).toThrow('NEW_PRODUCT.STOCK_VALUE_SHOULD_NOT_BE_NEGATIVE');
+  });
+
   it('should create newThread object correctly', () => {
     // Arrange
     const payload = {

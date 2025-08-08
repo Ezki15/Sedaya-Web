@@ -22,6 +22,10 @@ class NewProduct {
     if (typeof name !== 'string' || typeof description !== 'string' || typeof price !== 'number' || typeof stock !== 'number') {
       throw new Error('NEW_PRODUCT.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
+
+    if (stock < 0) {
+      throw new Error('NEW_PRODUCT.STOCK_VALUE_SHOULD_NOT_BE_NEGATIVE');
+    }
   }
 }
 
