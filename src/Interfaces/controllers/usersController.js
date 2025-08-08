@@ -10,7 +10,7 @@ class UsersController {
   async postRegisterUser(req, res) {
     const addUserUseCase = this._container.getInstance(AddUserUseCase.name);
     const addedUser = await addUserUseCase.execute(req.body);
-    return res.status(201).json({status: 'success', data: addedUser });
+    return res.status(201).json({ status: 'success', data: addedUser });
   }
 }
 

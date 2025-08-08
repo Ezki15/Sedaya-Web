@@ -20,6 +20,9 @@ import AuthenticationRepositoryPostgres from './repository/AuthenticationReposit
 import JwtTokenManager from './security/JwtTokenManager.js';
 import AuthenticationTokenManager from '../Applications/security/AuthenticationTokenManager.js';
 
+// Product
+import ProductRepository from '../Domains/products/ProductRepository.js';
+import ProductRepositoryPostgres from './repository/ProductRepositoryPostgres.js';
 
 // use case
 // Users
@@ -29,6 +32,9 @@ import AddUserUseCase from '../Applications/use_cases/AddUserUseCase.js';
 import LoginUserUseCase from '../Applications/use_cases/LoginUserUseCase.js';
 import LogoutUserUseCase from '../Applications/use_cases/LogoutUserUseCase.js';
 import RefreshAuthenticationUseCase from '../Applications/use_cases/RefreshAuthenticationUseCase.js';
+
+// products
+import AddProductUseCase from '../Applications/use_cases/AddProductUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -46,6 +52,16 @@ container.register([
         {
           concrete: nanoid,
         },
+      ],
+    },
+  },
+  {
+    key: ProductRepository.name,
+    Class: ProductRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        { concrete: pool },
+        { concrete: nanoid },
       ],
     },
   },
@@ -151,6 +167,19 @@ container.register([
         {
           name: 'authenticationRepository',
           internal: AuthenticationRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddProductUseCase.name,
+    Class: AddProductUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'productRepository',
+          internal: ProductRepository.name,
         },
       ],
     },

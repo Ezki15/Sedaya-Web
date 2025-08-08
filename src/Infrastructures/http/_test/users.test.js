@@ -1,5 +1,5 @@
-import pool from '../../database/postgres/pool';
 import request from 'supertest';
+import pool from '../../database/postgres/pool';
 import UsersTableTestHelper from '../../../../test/UsersTableTestHelper';
 import container from '../../container';
 import createServer from '../CreateServer';
@@ -49,7 +49,7 @@ describe('/users endpoint', () => {
       const server = await createServer(container);
 
       // Action
-    const response = await request(server)
+      const response = await request(server)
         .post('/auth/users/register')
         .send(requestPayload);
 
@@ -94,7 +94,7 @@ describe('/users endpoint', () => {
       const server = await createServer(container);
 
       // Action
-     const response = await request(server)
+      const response = await request(server)
         .post('/auth/users/register')
         .send(requestPayload);
 

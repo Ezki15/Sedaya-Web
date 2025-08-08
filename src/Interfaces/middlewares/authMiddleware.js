@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 function authenticationMiddleware(tokenManager) {
   return (req, res, next) => {
     try {

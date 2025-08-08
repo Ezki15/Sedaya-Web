@@ -85,7 +85,7 @@ describe('a RegisterUser entities', () => {
 
     // Action
     const {
-      fullname, username, email, password, role
+      fullname, username, email, password, role,
     } = new RegisterUser(payload);
 
     // Assert
