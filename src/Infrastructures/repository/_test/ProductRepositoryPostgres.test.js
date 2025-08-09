@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import ProductsTableTestHelper from '../../../../test/ProductsTableTestHelper.js';
 import pool from '../../database/postgres/pool.js';
 import NewProduct from '../../../Domains/products/entities/NewProduct.js';
+import UpdatedProduct from '../../../Domains/products/entities/UpdatedProduct.js';
 import ProductRepositoryPostgres from '../ProductRepositoryPostgres.js';
 import NotFoundError from '../../../Commons/exceptions/NotFoundError.js';
 
@@ -141,6 +142,41 @@ describe('ProductRepositoryPostgres', () => {
         price: 100000,
         stock: 50,
       });
+    });
+  });
+
+  describe('updateProduct function', () => {
+    it('should update product details', async () => {
+      // Arrange
+      const newProduct = new NewProduct({
+        name: 'Old Product',
+        description: 'Old Description',
+        price: 100000,
+        stock: 50,
+      });
+      const fakeIdGenerator = () => '123';
+      const productId = 'product-123';
+      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+
+      await productRepository.addProduct(newProduct);
+
+      const updatedProduct = new UpdatedProduct({
+        name: 'Updated Product',
+        description: 'Updated Description',
+        price: 150000,
+        stock: 20,
+      });
+
+      // Action
+      await productRepository.updateProduct(productId, updatedProduct);
+
+      // Assert
+      const product = await ProductsTableTestHelper.findProductById('product-123');
+      expect(product).toHaveLength(1);
+      expect(product[0].name).toBe(updatedProduct.name);
+      expect(product[0].description).toBe(updatedProduct.description);
+      expect(Number(product[0].price)).toBe(updatedProduct.price);
+      expect(Number(product[0].stock)).toBe(updatedProduct.stock);
     });
   });
 });

@@ -161,6 +161,76 @@ describe(' /products endpoint', () => {
     expect(responseJson.status).toEqual('fail');
   });
 
+  describe('when PUT /products/:id', () => {
+    it('should update product and return 200', async () => {
+      // Arrange
+      const productId = 'product-123'; // Mock product ID, replace with actual ID
+      await ProductsTableTestHelper.addProduct({ id: productId });
+      const requestPayload = {
+        name: 'Updated Product',
+        description: 'Updated description',
+        price: 15000,
+        stock: 25,
+      };
+      await UserTableTestHelper.addUser({ role: 'admin' }); // Ensure an admin user exists
+      const server = await createServer(container);
+      // Action
+      const response = await request(server)
+        .put(`/products/${productId}`)
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`)
+        .send(requestPayload);
+      // Assert
+      const responseJson = response.body;
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+    });
+    it('should return 404 when product not found', async () => {
+      // Arrange
+      const productId = 'non-existing-id'; // Mock non-existing product ID
+      const requestPayload = {
+        name: 'Updated Product',
+        description: 'Updated description',
+        price: 15000,
+        stock: 25,
+      };
+      await UserTableTestHelper.addUser({ role: 'admin' }); // Ensure an admin user exists
+      const server = await createServer(container);
+      // Action
+      const response = await request(server)
+        .put(`/products/${productId}`)
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`)
+        .send(requestPayload);
+      // Assert
+      const responseJson = response.body;
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Product tidak ada');
+    });
+    it('should return 403 when user not admin', async () => {
+      // Arrange
+      const productId = 'product-123'; // Mock product ID, replace with actual ID
+      await ProductsTableTestHelper.addProduct({ id: productId });
+      const requestPayload = {
+        name: 'Updated Product',
+        description: 'Updated description',
+        price: 15000,
+        stock: 25,
+      };
+      await UserTableTestHelper.addUser({ id: 'user-234', username: 'userNonAdmin', role: 'user' }); // Ensure a non-admin user exists
+      const server = await createServer(container);
+      // Action
+      const response = await request(server)
+        .put(`/products/${productId}`)
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken('user-234', 'userNonAdmin')}`)
+        .send(requestPayload);
+      // Assert
+      const responseJson = response.body;
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.status).toEqual('fail');
+    });
+  });
+
   describe('when GET /products', () => {
     it('should return all products correctly', async () => {
       // Arrange

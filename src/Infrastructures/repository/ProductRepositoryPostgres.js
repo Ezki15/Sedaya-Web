@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import NotFoundError from '../../Commons/exceptions/NotFoundError.js';
 import ProductRepository from '../../Domains/products/ProductRepository.js';
 
@@ -75,6 +76,29 @@ class ProductRepositoryPostgres extends ProductRepository {
       description: row.description,
       price: Number(row.price),
       stock: Number(row.stock),
+    };
+  }
+
+  async updateProduct(productId, updatedProduct) {
+    const updatedAt = new Date().toISOString();
+    const query = {
+      text: 'UPDATE products SET name = $1, description = $2, price = $3, stock = $4, updated_at = $5 WHERE id = $6 RETURNING id, name, description, price, stock',
+      values: [
+        updatedProduct.name,
+        updatedProduct.description,
+        updatedProduct.price,
+        updatedProduct.stock,
+        updatedAt,
+        productId,
+      ],
+    };
+
+    const result = await this._pool.query(query);
+    return {
+      name: result.rows[0].name,
+      description: result.rows[0].description,
+      price: Number(result.rows[0].price),
+      stock: Number(result.rows[0].stock),
     };
   }
 }

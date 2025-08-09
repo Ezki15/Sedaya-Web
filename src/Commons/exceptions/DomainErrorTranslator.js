@@ -20,7 +20,9 @@ DomainErrorTranslator._directories = {
   'NEW_PRODUCT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat product baru karena properti yang dibutuhkan tidak ada'),
   'NEW_PRODUCT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat product baru karena tipe data tidak sesuai'),
   'NEW_PRODUCT.STOCK_AND_PRICE_VALUE_SHOULD_NOT_BE_NEGATIVE': new InvariantError('tidak dapat membuat product baru karena nilai data stock negatif'),
-
+  'UPDATED_PRODUCT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat memperbarui product karena properti yang dibutuhkan tidak ada'),
+  'UPDATED_PRODUCT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat memperbarui product karena tipe data tidak sesuai'),
+  'UPDATED_PRODUCT.STOCK_AND_PRICE_VALUE_SHOULD_NOT_BE_NEGATIVE': new InvariantError('tidak dapat memperbarui product karena nilai data stock atau price negatif'),
 };
 
 export default DomainErrorTranslator;

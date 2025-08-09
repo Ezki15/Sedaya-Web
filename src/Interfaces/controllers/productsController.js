@@ -1,6 +1,7 @@
 import AddProductUseCase from '../../Applications/use_cases/AddProductUseCase.js';
 import GetProductsUseCase from '../../Applications/use_cases/GetProductsUseCase.js';
 import GetSingleProductUseCase from '../../Applications/use_cases/GetSingleProductUseCase.js';
+import UpdateProductUseCase from '../../Applications/use_cases/UpdateProductUseCase.js';
 
 class ProductsController {
   constructor(container) {
@@ -9,6 +10,7 @@ class ProductsController {
     this.postAddProduct = this.postAddProduct.bind(this);
     this.getProducts = this.getProducts.bind(this);
     this.getProductById = this.getProductById.bind(this);
+    this.putUpdateProduct = this.putUpdateProduct.bind(this);
   }
 
   async postAddProduct(req, res) {
@@ -29,6 +31,12 @@ class ProductsController {
     const product = await getSingleProductsUseCase.execute(productId);
 
     return res.status(200).json({ status: 'success', data: { product } });
+  }
+
+  async putUpdateProduct(req, res) {
+    const updateProductUseCase = this._container.getInstance(UpdateProductUseCase.name);
+    const updatedProduct = await updateProductUseCase.execute(req.params.id, req.body);
+    return res.status(200).json({ status: 'success', data: updatedProduct });
   }
 }
 

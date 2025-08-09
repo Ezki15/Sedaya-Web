@@ -14,6 +14,7 @@ const productsRoutes = (container) => {
   router.post('/products', authenticationMiddleware, adminVerifier, productsController.postAddProduct);
   router.get('/products', authenticationMiddleware, productsController.getProducts); // able to access from anyone who login
   router.get('/products/:id', authenticationMiddleware, productsController.getProductById); // able to access from anyone who login
+  router.put('/products/:id', authenticationMiddleware, adminVerifier, productsController.putUpdateProduct); // only admin can access
 
   return router;
 };
