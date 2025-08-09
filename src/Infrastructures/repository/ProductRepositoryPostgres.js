@@ -1,3 +1,4 @@
+import NotFoundError from '../../Commons/exceptions/NotFoundError.js';
 import ProductRepository from '../../Domains/products/ProductRepository.js';
 
 class ProductRepositoryPostgres extends ProductRepository {
@@ -45,6 +46,36 @@ class ProductRepositoryPostgres extends ProductRepository {
       price: Number(row.price),
       stock: Number(row.stock),
     }));
+  }
+
+  async validateAvailableProduct(productId) {
+    const query = {
+      text: 'SELECT id FROM products WHERE id = $1',
+      values: [productId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rows.length) {
+      throw new NotFoundError('Product tidak ada');
+    }
+  }
+
+  async getProductById(productId) {
+    const query = {
+      text: 'SELECT id, name, description, price, stock FROM products WHERE id = $1',
+      values: [productId],
+    };
+
+    const result = await this._pool.query(query);
+
+    const row = result.rows[0];
+    return {
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      price: Number(row.price),
+      stock: Number(row.stock),
+    };
   }
 }
 

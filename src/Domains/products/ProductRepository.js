@@ -1,13 +1,14 @@
+/* eslint-disable no-unused-vars */
 class ProductRepository {
   async addProduct() {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async validateAvailableProduct() {
+  async validateAvailableProduct(productId) {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async updateProduct() {
+  async updateProduct(productId, updatedProduct) {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
@@ -15,11 +16,11 @@ class ProductRepository {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getProductById() {
+  async getProductById(productId) {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async deleteProduct() {
+  async deleteProduct(productId) {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 }
