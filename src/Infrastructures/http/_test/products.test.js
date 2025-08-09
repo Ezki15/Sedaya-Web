@@ -180,4 +180,41 @@ describe(' /products endpoint', () => {
       expect(responseJson.status).toEqual('success');
     });
   });
+
+  describe('when GET /products/:id', () => {
+    it('should return product by id correctly', async () => {
+      // Arrange
+      await ProductsTableTestHelper.addProduct({});
+      const server = await createServer(container);
+      const productId = 'product-123'; // Mock product ID, replace with actual ID from test helper
+
+      // Action
+      const response = await request(server)
+        .get(`/products/${productId}`)
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.product.id).toEqual(productId);
+    });
+
+    it('should return 404 when product not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .get('/products/non-existing-id')
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+    });
+  });
 });
