@@ -9,7 +9,7 @@ describe('DeleteProductUseCase', () => {
     const productId = 'product-123';
 
     const mockProductRepository = new ProductRepository();
-    mockProductRepository.getProductById = jest.fn().mockImplementation(() => {
+    mockProductRepository.validateAvailableProduct = jest.fn().mockImplementation(() => {
       throw new NotFoundError('Product tidak ditemukan');
     });
 
@@ -26,7 +26,7 @@ describe('DeleteProductUseCase', () => {
     const productId = 'product-123';
 
     const mockProductRepository = new ProductRepository();
-    mockProductRepository.getProductById = jest.fn().mockImplementation(() => Promise.resolve({ id: 'product-123' }));
+    mockProductRepository.validateAvailableProduct = jest.fn().mockImplementation(() => Promise.resolve());
     mockProductRepository.deleteProductById = jest.fn().mockImplementation(() => Promise.resolve());
 
     const deleteProductUseCase = new DeleteProductUseCase({
@@ -37,7 +37,7 @@ describe('DeleteProductUseCase', () => {
     await deleteProductUseCase.execute(productId);
 
     // Assert
-    expect(mockProductRepository.getProductById).toHaveBeenCalledWith(productId);
+    expect(mockProductRepository.validateAvailableProduct).toHaveBeenCalledWith(productId);
     expect(mockProductRepository.deleteProductById).toHaveBeenCalledWith(productId);
   });
 });

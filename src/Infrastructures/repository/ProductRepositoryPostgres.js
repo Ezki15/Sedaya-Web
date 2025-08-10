@@ -103,6 +103,16 @@ class ProductRepositoryPostgres extends ProductRepository {
       stock: Number(result.rows[0].stock),
     };
   }
+
+  async deleteProductById(productId) {
+    const isDeleted = true;
+    const query = {
+      text: 'UPDATE products SET is_deleted = $1 WHERE id = $2',
+      values: [isDeleted, productId],
+    };
+
+    await this._pool.query(query);
+  }
 }
 
 export default ProductRepositoryPostgres;

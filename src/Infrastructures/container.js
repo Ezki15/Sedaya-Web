@@ -38,6 +38,7 @@ import AddProductUseCase from '../Applications/use_cases/AddProductUseCase.js';
 import GetProductsUseCase from '../Applications/use_cases/GetProductsUseCase.js';
 import GetSingleProductUseCase from '../Applications/use_cases/GetSingleProductUseCase.js';
 import UpdateProductUseCase from '../Applications/use_cases/UpdateProductUseCase.js';
+import DeleteProductUseCase from '../Applications/use_cases/DeleteProductUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -216,6 +217,19 @@ container.register([
   {
     key: UpdateProductUseCase.name,
     Class: UpdateProductUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'productRepository',
+          internal: ProductRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: DeleteProductUseCase.name,
+    Class: DeleteProductUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [

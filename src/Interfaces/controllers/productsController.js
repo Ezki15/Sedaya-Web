@@ -2,6 +2,7 @@ import AddProductUseCase from '../../Applications/use_cases/AddProductUseCase.js
 import GetProductsUseCase from '../../Applications/use_cases/GetProductsUseCase.js';
 import GetSingleProductUseCase from '../../Applications/use_cases/GetSingleProductUseCase.js';
 import UpdateProductUseCase from '../../Applications/use_cases/UpdateProductUseCase.js';
+import DeleteProductUseCase from '../../Applications/use_cases/DeleteProductUseCase.js';
 
 class ProductsController {
   constructor(container) {
@@ -11,6 +12,7 @@ class ProductsController {
     this.getProducts = this.getProducts.bind(this);
     this.getProductById = this.getProductById.bind(this);
     this.putUpdateProduct = this.putUpdateProduct.bind(this);
+    this.deleteProduct = this.deleteProduct.bind(this);
   }
 
   async postAddProduct(req, res) {
@@ -37,6 +39,12 @@ class ProductsController {
     const updateProductUseCase = this._container.getInstance(UpdateProductUseCase.name);
     const updatedProduct = await updateProductUseCase.execute(req.params.id, req.body);
     return res.status(200).json({ status: 'success', data: updatedProduct });
+  }
+
+  async deleteProduct(req, res) {
+    const deleteProductUseCase = this._container.getInstance(DeleteProductUseCase.name);
+    await deleteProductUseCase.execute(req.params.id);
+    return res.status(200).json({ status: 'success', message: 'Product deleted successfully' });
   }
 }
 

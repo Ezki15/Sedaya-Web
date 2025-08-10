@@ -287,4 +287,62 @@ describe(' /products endpoint', () => {
       expect(responseJson.status).toEqual('fail');
     });
   });
+
+  describe('when DELETE /products/:id', () => {
+    it('should delete product and return 200', async () => {
+      // Arrange
+      const productId = 'product-123'; // Mock product ID, replace with actual ID
+      await ProductsTableTestHelper.addProduct({ id: productId });
+      await UserTableTestHelper.addUser({ role: 'admin' }); // Ensure an admin user exists
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .delete(`/products/${productId}`)
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+
+    it('should return 404 when product not found', async () => {
+      // Arrange
+      const productId = 'non-existing-id'; // Mock non-existing product ID
+      await UserTableTestHelper.addUser({ role: 'admin' }); // Ensure an admin user exists
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .delete(`/products/${productId}`)
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+    });
+
+    it('should return 403 when user not admin', async () => {
+      // Arrange
+      const productId = 'product-123'; // Mock product ID, replace with actual ID
+      await ProductsTableTestHelper.addProduct({ id: productId });
+      await UserTableTestHelper.addUser({ id: 'user-234', username: 'userNonAdmin', role: 'user' }); // Ensure a non-admin user exists
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .delete(`/products/${productId}`)
+        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken('user-234', 'userNonAdmin')}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.status).toEqual('fail');
+    });
+  });
 });

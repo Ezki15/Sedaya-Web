@@ -179,4 +179,20 @@ describe('ProductRepositoryPostgres', () => {
       expect(Number(product[0].stock)).toBe(updatedProduct.stock);
     });
   });
+
+  describe('deleteProduct function', () => {
+    it('should delete product by id', async () => {
+      // Arrange
+      await ProductsTableTestHelper.addProduct({});
+      const fakeIdGenerator = () => '123';
+      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action
+      await productRepository.deleteProductById('product-123');
+
+      // Assert
+      const product = await ProductsTableTestHelper.findProductById('product-123');
+      expect(product).toHaveLength(0);
+    });
+  });
 });

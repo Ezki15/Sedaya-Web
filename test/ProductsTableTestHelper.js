@@ -23,14 +23,13 @@ const ProductsTableTestHelper = {
   },
 
   async findProductById(id) {
+    const initialValue = false;
     const query = {
-      text: 'SELECT * FROM products WHERE id = $1',
-      values: [id],
+      text: 'SELECT * FROM products WHERE id = $1 AND is_deleted = $2',
+      values: [id, initialValue],
     };
     const result = await pool.query(query);
-    if (result.rows.length === 0) {
-      return null;
-    }
+
     return result.rows;
   },
 
