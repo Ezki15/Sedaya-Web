@@ -20,7 +20,7 @@ class ProductRepository {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async deleteProduct(productId) {
+  async deleteProductById(productId) {
     throw new Error('PRODUCT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 }

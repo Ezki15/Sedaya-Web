@@ -23,6 +23,11 @@ export const up = (pgm) => {
     stock: {
       type: 'INTEGER',
     },
+    is_deleted: {
+      type: 'BOOLEAN',
+      notNull: true,
+      default: false,
+    },
     created_at: {
       type: 'TIMESTAMP',
       notNull: true,
@@ -42,5 +47,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('product');
+  pgm.dropTable('products');
 };

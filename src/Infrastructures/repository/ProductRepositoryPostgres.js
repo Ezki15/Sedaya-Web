@@ -11,17 +11,19 @@ class ProductRepositoryPostgres extends ProductRepository {
 
   async addProduct(newProduct) {
     const id = `product-${this._idGenerator()}`;
+    const isDeleted = false; // Default value for is_deleted
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO products VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id, name',
+      text: 'INSERT INTO products VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name',
       values: [
         id,
         newProduct.name,
         newProduct.description,
         newProduct.price,
         newProduct.stock,
+        isDeleted,
         createdAt,
         updatedAt,
       ],

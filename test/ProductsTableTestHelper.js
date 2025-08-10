@@ -10,12 +10,13 @@ const ProductsTableTestHelper = {
     description = 'Product Description',
     price = 100000,
     stock = 50,
+    isDeleted = false,
     createdAt = new Date().toISOString(),
     updatedAt = new Date().toISOString(),
   }) {
     const query = {
-      text: 'INSERT INTO products VALUES($1, $2, $3, $4, $5, $6, $7)',
-      values: [id, name, description, price, stock, createdAt, updatedAt],
+      text: 'INSERT INTO products VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
+      values: [id, name, description, price, stock, isDeleted, createdAt, updatedAt],
     };
 
     await pool.query(query);
