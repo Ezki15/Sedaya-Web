@@ -149,5 +149,26 @@ describe('/users endpoint', () => {
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('username tidak tersedia');
     });
+
+    it('should response 201 with role user is admin', async () => {
+      // Arrange
+      const requestPayload = {
+        fullname: 'Admin User',
+        username: 'adminuser',
+        email: 'admin@gmail.com',
+        password: 'adminpassword',
+        role: 'admin',
+      };
+      const server = await createServer(container);
+      // Action
+      const response = await request(server)
+        .post('/auth/users/register')
+        .send(requestPayload);
+      // Assert
+      const responseJson = response.body;
+      expect(response.statusCode).toBe(201);
+      expect(responseJson.status).toBe('success');
+      expect(responseJson.data).toBeDefined();
+    });
   });
 });

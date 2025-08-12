@@ -143,6 +143,24 @@ describe('ProductRepositoryPostgres', () => {
         stock: 50,
       });
     });
+
+    it('should throw NotFoundError if product does not exist with is_deleted is true', async () => {
+      // Arrange
+      await ProductsTableTestHelper.addProduct({
+        id: 'product-123',
+        name: 'Test Product',
+        description: 'Test Description',
+        price: 100000,
+        stock: 50,
+        is_deleted: true,
+      });
+      const fakeIdGenerator = () => '123';
+      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productId = 'product-123';
+
+      // Action & Assert
+      await expect(productRepository.getProductById(productId)).rejects.toThrow(NotFoundError);
+    });
   });
 
   describe('updateProduct function', () => {

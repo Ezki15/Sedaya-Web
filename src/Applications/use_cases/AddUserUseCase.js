@@ -9,7 +9,7 @@ class AddUserUseCase {
 
   async execute(useCasePayload) {
     const role = useCasePayload.role || 'user';
-    const registerUser = new RegisterUser({...useCasePayload, role});
+    const registerUser = new RegisterUser({ ...useCasePayload, role });
 
     await this._userRepository.verifyAvailableUsername(registerUser.username);
     await this._userRepository.verifyAvailableEmail(registerUser.email);

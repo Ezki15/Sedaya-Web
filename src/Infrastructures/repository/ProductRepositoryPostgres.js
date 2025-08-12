@@ -37,11 +37,14 @@ class ProductRepositoryPostgres extends ProductRepository {
   }
 
   async getProducts() {
+    const isDeleted = false; // Only fetch products that are not deleted
     const query = {
-      text: 'SELECT id, name, description, price, stock FROM products',
+      text: 'SELECT id, name, description, price, stock FROM products WHERE is_deleted = $1',
+      values: [isDeleted],
     };
 
     const result = await this._pool.query(query);
+    console.log(result.rows);
     return result.rows.map((row) => ({
       id: row.id,
       name: row.name,
@@ -64,9 +67,10 @@ class ProductRepositoryPostgres extends ProductRepository {
   }
 
   async getProductById(productId) {
+    const isDeleted = false; // Only fetch products that are not deleted
     const query = {
-      text: 'SELECT id, name, description, price, stock FROM products WHERE id = $1',
-      values: [productId],
+      text: 'SELECT id, name, description, price, stock FROM products WHERE id = $1 AND is_deleted = $2',
+      values: [productId, isDeleted],
     };
 
     const result = await this._pool.query(query);
