@@ -44,6 +44,11 @@ class ProductRepositoryPostgres extends ProductRepository {
     };
 
     const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Tidak ada produk yang ditemukan');
+    }
+
     console.log(result.rows);
     return result.rows.map((row) => ({
       id: row.id,
@@ -74,6 +79,9 @@ class ProductRepositoryPostgres extends ProductRepository {
     };
 
     const result = await this._pool.query(query);
+    if (!result.rows.length) {
+      throw new NotFoundError('Product tidak ditemukan');
+    }
 
     const row = result.rows[0];
     return {

@@ -149,10 +149,10 @@ describe('ProductRepositoryPostgres', () => {
       await ProductsTableTestHelper.addProduct({
         id: 'product-123',
         name: 'Test Product',
-        description: 'Test Description',
+        description: 'Test Description dengan is_deleted true',
         price: 100000,
         stock: 50,
-        is_deleted: true,
+        isDeleted: true,
       });
       const fakeIdGenerator = () => '123';
       const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
