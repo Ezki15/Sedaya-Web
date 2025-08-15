@@ -19,8 +19,6 @@ const ProductsTableTestHelper = {
       values: [id, name, description, price, stock, isDeleted, createdAt, updatedAt],
     };
 
-    console.log(query);
-
     await pool.query(query);
   },
 
