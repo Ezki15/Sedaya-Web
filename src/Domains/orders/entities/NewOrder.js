@@ -1,10 +1,12 @@
 class NewOrder {
-  constructor(payload) {
+  constructor(payload, totalPrice, owner) {
     this._verifyPayload(payload);
     this.products = payload.map((product) => ({
       productId: product.productId,
       quantity: product.quantity,
     }));
+    this.totalPrice = Number(totalPrice);
+    this.owner = owner;
   }
 
   _verifyPayload(payload) {

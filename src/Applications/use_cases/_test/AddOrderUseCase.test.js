@@ -12,9 +12,12 @@ describe('AddOrderUseCase', () => {
       { productId: 'product-456', quantity: 1 },
     ];
 
+    const userId = 'user-123';
+    const expectedTotalPrice = 300000; // Assuming product prices are 100000 each
+
     const expectedAddedOrder = {
       id: 'order-123',
-      products: useCasePayload.products,
+      products: useCasePayload,
       status: 'pending',
     };
     const mockOrderRepository = new OrderRepository();
@@ -37,11 +40,11 @@ describe('AddOrderUseCase', () => {
     });
 
     // Action
-    const addedOrder = await addOrderUseCase.execute(useCasePayload);
+    const addedOrder = await addOrderUseCase.execute(useCasePayload, userId);
 
     // Assert
     expect(addedOrder).toStrictEqual(expectedAddedOrder);
-    expect(mockOrderRepository.addOrder).toHaveBeenCalledWith(new NewOrder(useCasePayload));
+    expect(mockOrderRepository.addOrder).toHaveBeenCalledWith(new NewOrder(useCasePayload, expectedTotalPrice, userId));
     expect(mockProductRepository.validateAvailableProduct).toHaveBeenCalledTimes(useCasePayload.length);
     expect(mockProductRepository.getProductById).toHaveBeenCalledTimes(useCasePayload.length);
     expect(mockOrderRepository.addOrder).toHaveBeenCalledTimes(1);
@@ -52,6 +55,8 @@ describe('AddOrderUseCase', () => {
     const useCasePayload = [
       { productId: 'product-123', quantity: 5 },
     ];
+
+    const userId = 'user-123';
 
     const mockOrderRepository = new OrderRepository();
     const mockProductRepository = new ProductRepository();
@@ -71,7 +76,7 @@ describe('AddOrderUseCase', () => {
     });
 
     // Action & assert
-    await expect(addOrderUseCase.execute(useCasePayload)).rejects.toThrow('ADD_ORDER_USE_CASE.STOCK_PRODUCT_LESS_THAN_QUANTITY_ORDER');
+    await expect(addOrderUseCase.execute(useCasePayload, userId)).rejects.toThrow('ADD_ORDER_USE_CASE.STOCK_PRODUCT_LESS_THAN_QUANTITY_ORDER');
   });
 
   it('should throw error when product is not available', async () => {
@@ -79,6 +84,8 @@ describe('AddOrderUseCase', () => {
     const useCasePayload = [
       { productId: 'product-123', quantity: 5 },
     ];
+
+    const userId = 'user-123';
 
     const mockOrderRepository = new OrderRepository();
     const mockProductRepository = new ProductRepository();
@@ -91,6 +98,6 @@ describe('AddOrderUseCase', () => {
     });
 
     // Action & assert
-    await expect(addOrderUseCase.execute(useCasePayload)).rejects.toThrow('Product tidak ada');
+    await expect(addOrderUseCase.execute(useCasePayload, userId)).rejects.toThrow('Product tidak ada');
   });
 });

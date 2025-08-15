@@ -4,9 +4,11 @@ describe('a new order entities', () => {
   it('should throw error when payload (array) did not contain needed property', () => {
     // Arrange
     const payload = [];
+    const totalPrice = 0; // Example total price
+    const owner = 'user-123';
 
     // Action and Assert
-    expect(() => new NewOrder(payload)).toThrow('NEW_ORDER.NOT_CONTAIN_NEEDED_PROPERTY');
+    expect(() => new NewOrder(payload, totalPrice, owner)).toThrow('NEW_ORDER.NOT_CONTAIN_NEEDED_PROPERTY');
   });
 
   it('should throw error when payload did not meet data type specification', () => {
@@ -17,9 +19,11 @@ describe('a new order entities', () => {
         quantity: 'two',
       },
     ];
+    const totalPrice = 200000; // Example total price
+    const owner = 'user-123';
 
     // Action and Assert
-    expect(() => new NewOrder(payload)).toThrow('NEW_ORDER.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    expect(() => new NewOrder(payload, totalPrice, owner)).toThrow('NEW_ORDER.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
   it('should throw error when quantity value is negative', () => {
@@ -31,8 +35,11 @@ describe('a new order entities', () => {
       },
     ];
 
+    const totalPrice = 30000; // Example total price
+    const owner = 'user-123';
+
     // Action and Assert
-    expect(() => new NewOrder(payload)).toThrow('NEW_ORDER.QUANTITY_SHOULD_NOT_BE_NEGATIVE');
+    expect(() => new NewOrder(payload, totalPrice, owner)).toThrow('NEW_ORDER.QUANTITY_SHOULD_NOT_BE_NEGATIVE');
   });
 
   it('should create new order object correctly', () => {
@@ -43,9 +50,11 @@ describe('a new order entities', () => {
         quantity: 2,
       },
     ];
+    const userId = 'user-123';
+    const totalPrice = 20000; // Example total price
 
     // Action
-    const newOrder = new NewOrder(payload);
+    const newOrder = new NewOrder(payload, totalPrice, userId);
 
     // Assert
     expect(newOrder.products).toHaveLength(1);
