@@ -24,6 +24,10 @@ import AuthenticationTokenManager from '../Applications/security/AuthenticationT
 import ProductRepository from '../Domains/products/ProductRepository.js';
 import ProductRepositoryPostgres from './repository/ProductRepositoryPostgres.js';
 
+// Orders
+import OrderRepository from '../Domains/orders/OrderRepository.js';
+import OrderRepositoryPostgres from './repository/OrderRepositoryPostgres.js';
+
 // use case
 // Users
 import AddUserUseCase from '../Applications/use_cases/AddUserUseCase.js';
@@ -39,6 +43,9 @@ import GetProductsUseCase from '../Applications/use_cases/GetProductsUseCase.js'
 import GetSingleProductUseCase from '../Applications/use_cases/GetSingleProductUseCase.js';
 import UpdateProductUseCase from '../Applications/use_cases/UpdateProductUseCase.js';
 import DeleteProductUseCase from '../Applications/use_cases/DeleteProductUseCase.js';
+
+// Orders
+import AddOrderUseCase from '../Applications/use_cases/AddOrderUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -62,6 +69,16 @@ container.register([
   {
     key: ProductRepository.name,
     Class: ProductRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        { concrete: pool },
+        { concrete: nanoid },
+      ],
+    },
+  },
+  {
+    key: OrderRepository.name,
+    Class: OrderRepositoryPostgres,
     parameter: {
       dependencies: [
         { concrete: pool },
@@ -233,6 +250,23 @@ container.register([
     parameter: {
       injectType: 'destructuring',
       dependencies: [
+        {
+          name: 'productRepository',
+          internal: ProductRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddOrderUseCase.name,
+    Class: AddOrderUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'orderRepository',
+          internal: OrderRepository.name,
+        },
         {
           name: 'productRepository',
           internal: ProductRepository.name,
