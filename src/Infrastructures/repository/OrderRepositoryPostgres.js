@@ -62,7 +62,7 @@ class OrderRepositoryPostgres extends OrderRepository {
   async getAllOrders() {
     const isDeleted = false;
     const queryOrders = {
-      text: 'SELECT id as orderId, user_id as owner, status, total_price as totalPrice FROM orders WHERE is_deleted = $1',
+      text: 'SELECT id as orderId, user_id as owner, status, total_price FROM orders WHERE is_deleted = $1',
       values: [isDeleted],
     };
 

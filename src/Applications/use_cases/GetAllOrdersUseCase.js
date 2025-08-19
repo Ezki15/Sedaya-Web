@@ -9,18 +9,18 @@ class GetAllOrdersUseCase {
     // Kelompokkan orders by owner
     const groupedByOwner = orders.reduce((acc, order) => {
       const orderItems = itemsOrder
-        .filter((item) => item.orderId === order.id)
+        .filter((item) => item.order_id === order.orderid)
         .map((item) => ({
           name: item.name,
           quantity: item.quantity,
-          price: item.price,
-          subtotal: item.subtotal,
+          price: Number(item.price),
+          subtotal: Number(item.subtotal),
         }));
 
       const formattedOrder = {
-        id: order.orderId,
+        id: order.orderid,
         status: order.status,
-        totalPrice: order.totalPrice,
+        totalPrice: Number(order.total_price),
         items: orderItems,
       };
 

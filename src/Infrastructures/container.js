@@ -46,6 +46,7 @@ import DeleteProductUseCase from '../Applications/use_cases/DeleteProductUseCase
 
 // Orders
 import AddOrderUseCase from '../Applications/use_cases/AddOrderUseCase.js';
+import GetAllOrdersRepositoryPostgres from '../Applications/use_cases/GetAllOrdersUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -270,6 +271,19 @@ container.register([
         {
           name: 'productRepository',
           internal: ProductRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: GetAllOrdersRepositoryPostgres.name,
+    Class: GetAllOrdersRepositoryPostgres,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'orderRepository',
+          internal: OrderRepository.name,
         },
       ],
     },
