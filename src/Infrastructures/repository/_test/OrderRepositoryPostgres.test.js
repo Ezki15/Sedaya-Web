@@ -138,4 +138,35 @@ describe('OrderRepositoryPostgres', () => {
       expect(emptyResult.itemsOrder).toHaveLength(0);
     });
   });
+
+  describe('getOrderById function', () => {
+    it('should return the correct orders', async () => {
+      // Arrange
+      await UserTableTestHelper.addUser({ id: 'user-123' });
+      await ProductTableTestHelper.addProduct({ id: 'product-123', price: 50000 });
+      await ProductTableTestHelper.addProduct({ id: 'product-234', price: 10000 });
+      const payload = [
+        { productId: 'product-123', quantity: 2, price: 50000 },
+        { productId: 'product-234', quantity: 5, price: 10000 },
+      ];
+
+      const userId = 'user-123';
+      const totalPrice = 100000; // Example total price
+      const newOrder = new NewOrder(payload, totalPrice, userId);
+
+      let counter = 122; // Simulate ID generation
+      const fakeIdGenerator = () => `${++counter}`;
+      const orderRepository = new OrderRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action
+      await orderRepository.addOrder(newOrder);
+      const ordersResult = await orderRepository.getOrderById(userId);
+
+      // Test that the return value is an object with 'orders' and 'itemsOrder' keys
+      expect(ordersResult).toHaveProperty('orders');
+      expect(ordersResult).toHaveProperty('itemsOrder');
+      expect(Array.isArray(ordersResult.orders)).toBe(true);
+      expect(Array.isArray(ordersResult.itemsOrder)).toBe(true);
+    });
+  });
 });

@@ -21,7 +21,6 @@ class OrdersController {
   async getAllOrders(req, res) {
     const getAllOrdersUseCase = this._container.getInstance(GetAllOrdersRepositoryPostgres.name);
     const orders = await getAllOrdersUseCase.execute();
-    console.dir(orders, { depth: null });
     return res.status(200).json({ status: 'success', data: { orders } });
   }
 }
