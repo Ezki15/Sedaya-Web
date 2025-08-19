@@ -58,6 +58,27 @@ class OrderRepositoryPostgres extends OrderRepository {
       client.release(); // balikin client ke pool
     }
   }
+
+  async getAllOrders() {
+    const isDeleted = false;
+    const queryOrders = {
+      text: 'SELECT id as orderId, user_id as owner, status, total_price as totalPrice FROM orders WHERE is_deleted = $1',
+      values: [isDeleted],
+    };
+
+    const orders = await this._pool.query(queryOrders);
+
+    const queryItems = {
+      text: `SELECT o.order_id, p.name, o.quantity, o.price, o.subtotal 
+              FROM order_items as o
+              LEFT JOIN products as p 
+              ON p.id = o.product_id`,
+    };
+
+    const itemsOrder = await this._pool.query(queryItems);
+
+    return { orders: orders.rows, itemsOrder: itemsOrder.rows };
+  }
 }
 
 export default OrderRepositoryPostgres;

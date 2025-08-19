@@ -100,35 +100,42 @@ describe('OrderRepositoryPostgres', () => {
     });
   });
 
-  //   describe('findOrderById function', () => {
-  //     it('should throw NotFoundError when order not found', async () => {
-  //       // Arrange
-  //       const orderRepository = new OrderRepositoryPostgres(pool, {});
+  describe('getAllOrders function', () => {
+    it('should return all the orders', async () => {
+      // Arrange
+      // Arrange
+      await UserTableTestHelper.addUser({ id: 'user-123' });
+      await ProductTableTestHelper.addProduct({ id: 'product-123', price: 50000 });
+      await ProductTableTestHelper.addProduct({ id: 'product-234', price: 10000 });
+      const payload = [
+        { productId: 'product-123', quantity: 2, price: 50000 },
+        { productId: 'product-234', quantity: 5, price: 10000 },
+      ];
 
-  //       // Action & Assert
-  //       await expect(orderRepository.findOrderById('order-999')).rejects.toThrow(NotFoundError);
-  //     });
+      const userId = 'user-123';
+      const totalPrice = 100000; // Example total price
+      const newOrder = new NewOrder(payload, totalPrice, userId);
 
-  //     it('should return the order when found', async () => {
-  //       // Arrange
-  //       await OrderTableTestHelper.addOrder({
-  //         id: 'order-123',
-  //         userId: 'user-123',
-  //         quantity: 1,
-  //         totalPrice: 100000,
-  //         status: 'pending',
-  //       });
-  //       const orderRepository = new OrderRepositoryPostgres(pool, {});
+      let counter = 122; // Simulate ID generation
+      const fakeIdGenerator = () => `${++counter}`;
+      const orderRepository = new OrderRepositoryPostgres(pool, fakeIdGenerator);
 
-//       // Action
-//       const order = await orderRepository.findOrderById('order-123');
-//       // Assert
-//       expect(order).toHaveLength(1);
-//       expect(order[0]).toHaveProperty('id', 'order-123');
-//       expect(order[0]).toHaveProperty('userId', 'user-123');
-//       expect(order[0]).toHaveProperty('quantity', 1);
-//       expect(order[0]).toHaveProperty('totalPrice', 100000);
-//       expect(order[0]).toHaveProperty('status', 'pending');
-//     });
-//   });
+      // Action
+      await orderRepository.addOrder(newOrder);
+      const ordersResult = await orderRepository.getAllOrders();
+
+      // Test that the return value is an object with 'orders' and 'itemsOrder' keys
+      expect(ordersResult).toHaveProperty('orders');
+      expect(ordersResult).toHaveProperty('itemsOrder');
+      expect(Array.isArray(ordersResult.orders)).toBe(true);
+      expect(Array.isArray(ordersResult.itemsOrder)).toBe(true);
+
+      // Test that getAllOrders returns empty arrays if no orders exist
+      await OrderTableTestHelper.cleanTable();
+      const emptyResult = await orderRepository.getAllOrders();
+      expect(emptyResult.orders).toHaveLength(0);
+      expect(Array.isArray(emptyResult.itemsOrder)).toBe(true);
+      expect(emptyResult.itemsOrder).toHaveLength(0);
+    });
+  });
 });
