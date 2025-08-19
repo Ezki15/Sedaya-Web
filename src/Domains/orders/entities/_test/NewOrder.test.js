@@ -17,6 +17,7 @@ describe('a new order entities', () => {
       {
         productId: 123456,
         quantity: 'two',
+        price: 10000,
       },
     ];
     const totalPrice = 200000; // Example total price
@@ -32,6 +33,7 @@ describe('a new order entities', () => {
       {
         productId: 'product-123',
         quantity: -2,
+        price: 200000,
       },
     ];
 
@@ -48,6 +50,7 @@ describe('a new order entities', () => {
       {
         productId: 'product-123',
         quantity: 2,
+        price: 10000,
       },
     ];
     const userId = 'user-123';

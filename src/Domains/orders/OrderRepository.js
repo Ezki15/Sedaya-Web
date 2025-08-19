@@ -16,7 +16,7 @@ class OrderRepository {
     throw new Error('ORDER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getOrders() {
+  async getAllOrders() {
     throw new Error('ORDER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 

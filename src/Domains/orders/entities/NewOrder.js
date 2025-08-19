@@ -4,6 +4,8 @@ class NewOrder {
     this.products = payload.map((product) => ({
       productId: product.productId,
       quantity: product.quantity,
+      price: product.price,
+      subtotal: product.quantity * product.price,
     }));
     this.totalPrice = Number(totalPrice);
     this.owner = owner;
@@ -15,10 +17,10 @@ class NewOrder {
     }
 
     payload.forEach((product) => {
-      if (typeof product.productId !== 'string' || typeof product.quantity !== 'number') {
+      if (typeof product.productId !== 'string' || typeof product.quantity !== 'number' || typeof product.price !== 'number') {
         throw new Error('NEW_ORDER.NOT_MEET_DATA_TYPE_SPECIFICATION');
       }
-      if (product.quantity < 0) {
+      if (product.quantity < 0 || product.price < 0) {
         throw new Error('NEW_ORDER.QUANTITY_SHOULD_NOT_BE_NEGATIVE');
       }
     });

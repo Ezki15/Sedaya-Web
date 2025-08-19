@@ -1,5 +1,7 @@
+/* eslint-disable no-plusplus */
 import OrderTableTestHelper from '../../../../test/OrderTableTestHelper.js';
 import UserTableTestHelper from '../../../../test/UsersTableTestHelper.js';
+import ProductTableTestHelper from '../../../../test/ProductsTableTestHelper.js';
 import pool from '../../database/postgres/pool.js';
 import NewOrder from '../../../Domains/orders/entities/NewOrder.js';
 import OrderRepositoryPostgres from '../OrderRepositoryPostgres.js';
@@ -8,6 +10,7 @@ import OrderRepositoryPostgres from '../OrderRepositoryPostgres.js';
 describe('OrderRepositoryPostgres', () => {
   afterEach(async () => {
     await OrderTableTestHelper.cleanTable();
+    await ProductTableTestHelper.cleanTable();
     await UserTableTestHelper.cleanTable();
   });
 
@@ -19,16 +22,19 @@ describe('OrderRepositoryPostgres', () => {
     it('should persist new order', async () => {
       // Arrange
       await UserTableTestHelper.addUser({ id: 'user-123' });
+      await ProductTableTestHelper.addProduct({ id: 'product-123', price: 50000 });
+      await ProductTableTestHelper.addProduct({ id: 'product-234', price: 10000 });
       const payload = [
-        { productId: 'product-123', quantity: 2 },
-        { productId: 'product-234', quantity: 5 },
+        { productId: 'product-123', quantity: 2, price: 50000 },
+        { productId: 'product-234', quantity: 5, price: 10000 },
       ];
 
       const userId = 'user-123';
       const totalPrice = 100000; // Example total price
       const newOrder = new NewOrder(payload, totalPrice, userId);
 
-      const fakeIdGenerator = () => '123';
+      let counter = 122; // Simulate ID generation
+      const fakeIdGenerator = () => `${++counter}`;
       const orderRepository = new OrderRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
@@ -42,15 +48,19 @@ describe('OrderRepositoryPostgres', () => {
     it('should return the added order correctly', async () => {
       // Arrange
       await UserTableTestHelper.addUser({ id: 'user-123' });
+      await ProductTableTestHelper.addProduct({ id: 'product-123', price: 50000 });
+      await ProductTableTestHelper.addProduct({ id: 'product-234', price: 10000 });
+      // Prepare payload
       const payload = [
-        { productId: 'product-123', quantity: 2 },
-        { productId: 'product-234', quantity: 5 },
+        { productId: 'product-123', quantity: 2, price: 50000 },
+        { productId: 'product-234', quantity: 5, price: 10000 },
       ];
 
       const userId = 'user-123';
       const totalPrice = 100000; // Example total price
       const newOrder = new NewOrder(payload, totalPrice, userId);
-      const fakeIdGenerator = () => '123';
+      let counter = 122; // Simulate ID generation
+      const fakeIdGenerator = () => `${++counter}`;
       const orderRepository = new OrderRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
@@ -62,6 +72,31 @@ describe('OrderRepositoryPostgres', () => {
         totalPrice: newOrder.totalPrice,
         status: 'pending',
       });
+    });
+
+    it('should rollback if order_items insert fails', async () => {
+    // Arrange: buat user
+      await UserTableTestHelper.addUser({ id: 'user-123' });
+
+      // Payload dengan productId yang tidak ada di tabel products (akan bikin FK error)
+      const payload = [
+        { productId: 'product-not-exist', quantity: 2, price: 50000 },
+      ];
+
+      const userId = 'user-123';
+      const totalPrice = 100000;
+      const newOrder = new NewOrder(payload, totalPrice, userId);
+
+      const fakeIdGenerator = () => '123';
+      const orderRepository = new OrderRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action & Assert: harus throw error
+      await expect(orderRepository.addOrder(newOrder))
+        .rejects.toThrow();
+
+      // Setelah gagal, tabel orders HARUS tetap kosong (rollback jalan)
+      const orders = await OrderTableTestHelper.findOrderById('order-123');
+      expect(orders).toHaveLength(0);
     });
   });
 

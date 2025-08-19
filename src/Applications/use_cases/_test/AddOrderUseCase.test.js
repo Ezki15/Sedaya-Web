@@ -8,8 +8,8 @@ describe('AddOrderUseCase', () => {
   it('should orchestrating the add order action correctly', async () => {
     // Arrange
     const useCasePayload = [
-      { productId: 'product-123', quantity: 2 },
-      { productId: 'product-456', quantity: 1 },
+      { productId: 'product-123', quantity: 2, price: 100000 },
+      { productId: 'product-456', quantity: 1, price: 100000 },
     ];
 
     const userId = 'user-123';
@@ -53,7 +53,7 @@ describe('AddOrderUseCase', () => {
   it('should throw error when quantity higher than product stock', async () => {
     // Arrange
     const useCasePayload = [
-      { productId: 'product-123', quantity: 5 },
+      { productId: 'product-123', quantity: 5, price: 100000 },
     ];
 
     const userId = 'user-123';
@@ -82,7 +82,7 @@ describe('AddOrderUseCase', () => {
   it('should throw error when product is not available', async () => {
     // Arrange
     const useCasePayload = [
-      { productId: 'product-123', quantity: 5 },
+      { productId: 'product-123', quantity: 5, price: 100000 },
     ];
 
     const userId = 'user-123';

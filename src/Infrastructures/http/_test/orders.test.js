@@ -21,16 +21,18 @@ describe('/orders endpoint', () => {
     it('should response 201 and persisted order', async () => {
     // Arrange
       await UserTableTestHelper.addUser({ id: 'user-123', username: 'userapp' });
-      await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1' });
-      await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1', price: 10000 });
+      await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2', price: 20000 });
 
       const orderPayload = [{
         productId: 'product-123',
         quantity: 2,
+        price: 10000,
       },
       {
         productId: 'product-456',
         quantity: 1,
+        price: 20000,
       }];
       const userId = 'user-123';
 

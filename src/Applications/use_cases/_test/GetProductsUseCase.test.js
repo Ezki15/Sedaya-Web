@@ -16,7 +16,7 @@ describe('GetProductsUseCase', () => {
       productRepository: mockProductRepository,
     });
 
-    // Act
+    // Action
     const products = await getProductsUseCase.execute();
 
     // Assert

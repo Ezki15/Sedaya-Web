@@ -10,28 +10,54 @@ class OrderRepositoryPostgres extends OrderRepository {
   }
 
   async addOrder(newOrder) {
-    const id = `order-${this._idGenerator()}`;
-    const { totalPrice } = newOrder;
-    const { owner } = newOrder;
-    const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
-    const status = 'pending'; // Default status for new orders
-    const isDeleted = false; // Default value for is_deleted
+    const client = await this._pool.connect(); // ambil koneksi biar transaksi konsisten
+    try {
+      await client.query('BEGIN'); // mulai transaksi
 
-    const query = {
-      text: 'INSERT INTO orders (id, user_id, total_price, status, created_at, updated_at, is_deleted) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id, total_price, status',
-      values: [id, owner, totalPrice, status, createdAt, updatedAt, isDeleted],
-    };
+      const orderId = `order-${this._idGenerator()}`;
+      const { totalPrice, owner, products } = newOrder;
+      const createdAt = new Date().toISOString();
+      const updatedAt = createdAt;
+      const status = 'pending';
+      const isDeleted = false;
 
-    const result = await this._pool.query(query);
-    return {
-      id: result.rows[0].id,
-      totalPrice: Number(result.rows[0].total_price),
-      status: result.rows[0].status,
-    };
+      // Insert ke tabel orders dulu
+      const orderQuery = {
+        text: `
+          INSERT INTO orders (id, user_id, total_price, status, created_at, updated_at, is_deleted)
+          VALUES($1, $2, $3, $4, $5, $6, $7)
+          RETURNING id, total_price, status
+        `,
+        values: [orderId, owner, totalPrice, status, createdAt, updatedAt, isDeleted],
+      };
+
+      const orderResult = await client.query(orderQuery);
+
+      // Insert ke order_items
+      const queries = products.map((product) => {
+        const orderItemId = `order_item-${this._idGenerator()}`;
+        const subtotal = product.price * product.quantity;
+        return client.query(
+          'INSERT INTO order_items (id, order_id, product_id, quantity, price, subtotal) VALUES($1, $2, $3, $4, $5, $6)',
+          [orderItemId, orderId, product.productId, product.quantity, product.price, subtotal],
+        );
+      });
+
+      await Promise.all(queries);
+
+      await client.query('COMMIT'); // simpan semua
+      return {
+        id: orderResult.rows[0].id,
+        totalPrice: Number(orderResult.rows[0].total_price),
+        status: orderResult.rows[0].status,
+      };
+    } catch (error) {
+      await client.query('ROLLBACK'); // batalkan semua kalau gagal
+      throw error;
+    } finally {
+      client.release(); // balikin client ke pool
+    }
   }
-
-  // Additional methods like findOrderById can be implemented here
 }
 
 export default OrderRepositoryPostgres;
