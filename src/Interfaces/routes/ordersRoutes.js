@@ -12,6 +12,7 @@ const ordersRoutes = (container) => {
 
   router.post('/orders', authenticationMiddleware, ordersController.postAddOrder);
   router.get('/orders', authenticationMiddleware, adminVerifier, ordersController.getAllOrders);
+  router.get('/orders/:id', authenticationMiddleware, ordersController.getOrderById);
 
   return router;
 };

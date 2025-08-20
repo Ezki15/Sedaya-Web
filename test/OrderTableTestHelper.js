@@ -8,7 +8,6 @@ const OrderTableTestHelper = {
   async addOrder({
     id = 'order-123',
     userId = 'user-123',
-    quantity = 1,
     totalPrice = 100000,
     status = 'pending',
     createdAt = new Date().toISOString(),
@@ -16,8 +15,8 @@ const OrderTableTestHelper = {
     isDeleted = false, // Default value for is_deleted
   }) {
     const query = {
-      text: 'INSERT INTO orders VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-      values: [id, userId, quantity, totalPrice, status, createdAt, updatedAt, isDeleted],
+      text: 'INSERT INTO orders VALUES($1, $2, $3, $4, $5, $6, $7)',
+      values: [id, userId, totalPrice, status, createdAt, updatedAt, isDeleted],
     };
 
     await pool.query(query);

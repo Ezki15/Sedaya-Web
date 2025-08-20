@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-plusplus */
 import OrderTableTestHelper from '../../../../test/OrderTableTestHelper.js';
 import UserTableTestHelper from '../../../../test/UsersTableTestHelper.js';
@@ -5,7 +6,7 @@ import ProductTableTestHelper from '../../../../test/ProductsTableTestHelper.js'
 import pool from '../../database/postgres/pool.js';
 import NewOrder from '../../../Domains/orders/entities/NewOrder.js';
 import OrderRepositoryPostgres from '../OrderRepositoryPostgres.js';
-// import NotFoundError from '../../../Commons/exceptions/NotFoundError.js';
+import NotFoundError from '../../../Commons/exceptions/NotFoundError.js';
 
 describe('OrderRepositoryPostgres', () => {
   afterEach(async () => {
@@ -103,7 +104,6 @@ describe('OrderRepositoryPostgres', () => {
   describe('getAllOrders function', () => {
     it('should return all the orders', async () => {
       // Arrange
-      // Arrange
       await UserTableTestHelper.addUser({ id: 'user-123' });
       await ProductTableTestHelper.addProduct({ id: 'product-123', price: 50000 });
       await ProductTableTestHelper.addProduct({ id: 'product-234', price: 10000 });
@@ -167,6 +167,32 @@ describe('OrderRepositoryPostgres', () => {
       expect(ordersResult).toHaveProperty('itemsOrder');
       expect(Array.isArray(ordersResult.orders)).toBe(true);
       expect(Array.isArray(ordersResult.itemsOrder)).toBe(true);
+    });
+  });
+
+  describe('validateAvailableOrder function', () => {
+    it('should throw NotFoundError when order is not available', async () => {
+      // Arrange
+      await UserTableTestHelper.addUser({ id: 'user-123' });
+      await OrderTableTestHelper.addOrder({ id: 'order-123', userId: 'user-123' });
+
+      const orderId = 'order-234';
+      const orderRepository = new OrderRepositoryPostgres(pool, {});
+
+      // Action & assert
+      await expect(orderRepository.validateAvailableOrder(orderId)).rejects.toThrow(NotFoundError);
+    });
+
+    it('should not throw NotFoundError when order is available', async () => {
+      // Arrange
+      await UserTableTestHelper.addUser({ id: 'user-123' });
+      await OrderTableTestHelper.addOrder({ id: 'order-123', userId: 'user-123' });
+
+      const orderId = 'order-123';
+      const orderRepository = new OrderRepositoryPostgres(pool, {});
+
+      // Action & assert
+      await expect(orderRepository.validateAvailableOrder(orderId)).resolves.not.toThrow(NotFoundError);
     });
   });
 });

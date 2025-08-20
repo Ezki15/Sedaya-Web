@@ -150,18 +150,85 @@ describe('/orders endpoint', () => {
 
       await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp')}`)
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`)
         .send(orderPayload1);
 
       await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp')}`)
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp2')}`)
         .send(orderPayload2);
 
       // Action
       const response = await request(await createServer(container))
         .get('/orders')
         .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(adminId, 'adminapp')}`);
+
+      // Assert
+      const responseJson = response.body;
+      expect(response.statusCode).toBe(200);
+      expect(responseJson.status).toBe('success');
+      expect(responseJson.data.orders).toBeDefined();
+    });
+  });
+
+  describe('GET /orders/:id', () => {
+    it('should return 200 and orders of the user', async () => {
+      // Arrange
+      // test 1
+      await UserTableTestHelper.addUser({
+        id: 'user-123', username: 'adminapp', email: 'admnin@gmail.com', role: 'admin',
+      });
+      await UserTableTestHelper.addUser({ id: 'user-234', username: 'userapp1', email: 'userapp1@gmail.com' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1', price: 10000 });
+      await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2', price: 20000 });
+
+      const orderPayload1 = [{
+        productId: 'product-123',
+        quantity: 2,
+        price: 10000,
+      },
+      {
+        productId: 'product-456',
+        quantity: 1,
+        price: 20000,
+      }];
+      const userId1 = 'user-234';
+      // const adminId = 'user-123';
+
+      // test 2
+      await UserTableTestHelper.addUser({ id: 'user-345', username: 'userapp2', email: 'userapp2@gmail.com' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-234', name: 'Product 3', price: 10000 });
+      await ProductsTableTestHelper.addProduct({ id: 'product-567', name: 'Product 4', price: 20000 });
+
+      const orderPayload2 = [{
+        productId: 'product-234',
+        quantity: 2,
+        price: 10000,
+      },
+      {
+        productId: 'product-567',
+        quantity: 1,
+        price: 20000,
+      }];
+      const userId2 = 'user-345';
+
+      const orders1 = await request(await createServer(container))
+        .post('/orders')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`)
+        .send(orderPayload1);
+
+      const { data } = orders1.body;
+
+      await request(await createServer(container))
+        .post('/orders')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp2')}`)
+        .send(orderPayload2);
+
+      // Action
+      const orderId = data.id;
+      const response = await request(await createServer(container))
+        .get(`/orders/${orderId}`)
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`);
 
       // Assert
       const responseJson = response.body;

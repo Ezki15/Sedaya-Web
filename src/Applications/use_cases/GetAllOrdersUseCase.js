@@ -36,6 +36,8 @@ class GetAllOrdersUseCase {
       return acc;
     }, []);
 
+    // console.log('groupedByOwner', groupedByOwner);
+
     return groupedByOwner;
   }
 }

@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable max-len */
+import NotFoundError from '../../Commons/exceptions/NotFoundError.js';
 import OrderRepository from '../../Domains/orders/OrderRepository.js';
 
 class OrderRepositoryPostgres extends OrderRepository {
@@ -56,6 +57,19 @@ class OrderRepositoryPostgres extends OrderRepository {
       throw error;
     } finally {
       client.release(); // balikin client ke pool
+    }
+  }
+
+  async validateAvailableOrder(orderId) {
+    const isDeleted = false;
+    const query = {
+      text: 'SELECT id FROM orders WHERE id = $1 AND is_deleted = $2',
+      values: [orderId, isDeleted],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rows.length) {
+      throw new NotFoundError('Order tidak ada');
     }
   }
 

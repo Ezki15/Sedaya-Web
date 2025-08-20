@@ -6,12 +6,12 @@ import OrderRepository from '../../../Domains/orders/OrderRepository.js';
 describe('GetOrderUseCase', () => {
   it('should orchestrate the get all orders action correctly', async () => {
     // Arrange
-    const mockOrders = {
-      orderId: 'order-1',
-      owner: 'user-123',
+    const mockOrders = [{
+      orderid: 'order-1',
+      fullname: 'User App use case',
       status: 'pending',
       totalPrice: 300000,
-    };
+    }];
 
     const mockItems = {
       items: [

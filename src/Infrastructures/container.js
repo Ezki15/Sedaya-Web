@@ -46,7 +46,8 @@ import DeleteProductUseCase from '../Applications/use_cases/DeleteProductUseCase
 
 // Orders
 import AddOrderUseCase from '../Applications/use_cases/AddOrderUseCase.js';
-import GetAllOrdersRepositoryPostgres from '../Applications/use_cases/GetAllOrdersUseCase.js';
+import GetAllOrdersUseCase from '../Applications/use_cases/GetAllOrdersUseCase.js';
+import GetOrderUseCase from '../Applications/use_cases/GetOrderUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -276,8 +277,21 @@ container.register([
     },
   },
   {
-    key: GetAllOrdersRepositoryPostgres.name,
-    Class: GetAllOrdersRepositoryPostgres,
+    key: GetAllOrdersUseCase.name,
+    Class: GetAllOrdersUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'orderRepository',
+          internal: OrderRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: GetOrderUseCase.name,
+    Class: GetOrderUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [
