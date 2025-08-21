@@ -1,6 +1,7 @@
 import AddOrderUseCase from '../../Applications/use_cases/AddOrderUseCase.js';
 import GetAllOrdersUseCase from '../../Applications/use_cases/GetAllOrdersUseCase.js';
 import GetOrderUseCase from '../../Applications/use_cases/GetOrderUseCase.js';
+import UpdateOrderUseCase from '../../Applications/use_cases/UpdateOrderUseCase.js';
 
 class OrdersController {
   constructor(container) {
@@ -9,6 +10,7 @@ class OrdersController {
     this.postAddOrder = this.postAddOrder.bind(this);
     this.getAllOrders = this.getAllOrders.bind(this);
     this.getOrderById = this.getOrderById.bind(this);
+    this.updateOrder = this.updateOrder.bind(this);
   }
 
   async postAddOrder(req, res) {
@@ -32,6 +34,13 @@ class OrdersController {
     const getOrderUseCase = this._container.getInstance(GetOrderUseCase.name);
     const orders = await getOrderUseCase.execute(credential, orderId);
     return res.status(200).json({ status: 'success', data: { orders } });
+  }
+
+  async updateOrder(req, res) {
+    const updatePayload = req.body;
+    const updateOrderUseCase = this._container.getInstance(UpdateOrderUseCase.name);
+    const updatedOrder = await updateOrderUseCase.execute(updatePayload);
+    return res.status(200).json({ status: 'success', data: updatedOrder });
   }
 }
 

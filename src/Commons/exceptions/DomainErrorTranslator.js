@@ -33,6 +33,9 @@ DomainErrorTranslator._directories = {
   'NEW_ORDER.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat order baru karena properti yang dibutuhkan tidak ada'),
   'NEW_ORDER.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat order baru karena tipe data tidak sesuai'),
   'NEW_ORDER.QUANTITY_SHOULD_NOT_BE_NEGATIVE': new InvariantError('tidak dapat membuat order baru karena quantity tidak boleh negatif'),
+  'UPDATED_ORDER.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat memperbarui order karena properti yang dibutuhkan tidak ada'),
+  'UPDATED_ORDER.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat memperbarui order karena tipe data tidak sesuai'),
+  'UPDATED_ORDER.INVALID_STATUS_DATA': new InvariantError('data status tidak valid'),
 
 };
 

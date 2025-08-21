@@ -237,4 +237,38 @@ describe('/orders endpoint', () => {
       expect(responseJson.data.orders).toBeDefined();
     });
   });
+
+  describe('when PATCH /orders/status', () => {
+    it('should update order and return 200', async () => {
+      // Arrange
+      await UserTableTestHelper.addUser({
+        id: 'user-123', username: 'adminapp', email: 'admnin@gmail.com', role: 'admin',
+      });
+      await UserTableTestHelper.addUser({
+        id: 'user-234', username: 'userpp', email: 'userapp@gmail.com', role: 'user',
+      });
+      await OrderTableTestHelper.addOrder({ id: 'order-123', userId: 'user-234' });
+      await OrderTableTestHelper.addOrder({ id: 'order-234', userId: 'user-234' });
+
+      const requestPayload = {
+        orderIds: ['order-123', 'order-234'],
+        status: 'completed',
+      };
+      const adminId = 'user-123';
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .patch('/orders/status')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(adminId, 'adminapp')}`)
+        .send(requestPayload);
+
+      // Assert
+      const responseJson = response.body;
+      // console.dir(responseJson, { depth: null });
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+    });
+  });
 });

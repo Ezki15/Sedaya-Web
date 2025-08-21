@@ -48,6 +48,7 @@ import DeleteProductUseCase from '../Applications/use_cases/DeleteProductUseCase
 import AddOrderUseCase from '../Applications/use_cases/AddOrderUseCase.js';
 import GetAllOrdersUseCase from '../Applications/use_cases/GetAllOrdersUseCase.js';
 import GetOrderUseCase from '../Applications/use_cases/GetOrderUseCase.js';
+import UpdateOrderUseCase from '../Applications/use_cases/UpdateOrderUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -292,6 +293,19 @@ container.register([
   {
     key: GetOrderUseCase.name,
     Class: GetOrderUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'orderRepository',
+          internal: OrderRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: UpdateOrderUseCase.name,
+    Class: UpdateOrderUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [

@@ -212,7 +212,6 @@ describe('OrderRepositoryPostgres', () => {
       const updatedOrder = await orderRepository.updateOrder(payload);
 
       // Assert
-      console.log(updatedOrder);
       expect(updatedOrder.orderId).toEqual('order-123');
       expect(updatedOrder.status).toEqual('completed');
     });
