@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
 import NewOrder from '../../Domains/orders/entities/NewOrder.js';
 
 class AddOrderUseCase {

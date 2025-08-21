@@ -195,4 +195,26 @@ describe('OrderRepositoryPostgres', () => {
       await expect(orderRepository.validateAvailableOrder(orderId)).resolves.not.toThrow(NotFoundError);
     });
   });
+
+  describe('updateOrder function', () => {
+    it('should update order status', async () => {
+      // Arrange
+      await UserTableTestHelper.addUser({ id: 'user-123' });
+      await OrderTableTestHelper.addOrder({ id: 'order-123', userId: 'user-123' });
+
+      const payload = {
+        orderId: 'order-123',
+        status: 'completed',
+      };
+      const orderRepository = new OrderRepositoryPostgres(pool, {});
+
+      // Action
+      const updatedOrder = await orderRepository.updateOrder(payload);
+
+      // Assert
+      console.log(updatedOrder);
+      expect(updatedOrder.orderId).toEqual('order-123');
+      expect(updatedOrder.status).toEqual('completed');
+    });
+  });
 });

@@ -118,6 +118,24 @@ class OrderRepositoryPostgres extends OrderRepository {
 
     return { orders: orders.rows, itemsOrder: itemsOrder.rows };
   }
+
+  async updateOrder(payload) {
+    const { orderId, status } = payload;
+    const updateAt = new Date().toISOString();
+    const query = {
+      text: `UPDATE orders SET status = $1, 
+                              updated_at = $2 
+                              WHERE id = $3 RETURNING id, status`,
+      values: [status, updateAt, orderId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return {
+      orderId: result.rows[0].id,
+      status: result.rows[0].status,
+    };
+  }
 }
 
 export default OrderRepositoryPostgres;
