@@ -10,13 +10,13 @@ describe('GetOrderUseCase', () => {
       orderid: 'order-1',
       fullname: 'User App use case',
       status: 'pending',
-      totalPrice: 300000,
+      totalprice: 300000,
     }];
 
     const mockItems = {
       items: [
-        { name: 'Product 1', quantity: 2, price: 50000, subtotal: 100000 },
-        { name: 'Product 2', quantity: 2, price: 100000, subtotal: 200000 },
+        { name: 'Product 1', product_id: 'product-123', quantity: 2, price: 50000, subtotal: 100000 },
+        { name: 'Product 2', product_id: 'product-234', quantity: 2, price: 100000, subtotal: 200000 },
       ],
     };
 

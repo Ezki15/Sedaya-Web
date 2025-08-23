@@ -313,6 +313,10 @@ container.register([
           name: 'orderRepository',
           internal: OrderRepository.name,
         },
+        {
+          name: 'productRepository',
+          internal: ProductRepository.name,
+        },
       ],
     },
   },

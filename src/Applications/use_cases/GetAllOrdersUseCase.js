@@ -20,7 +20,7 @@ class GetAllOrdersUseCase {
       const formattedOrder = {
         id: order.orderid,
         status: order.status,
-        totalPrice: Number(order.total_price),
+        totalPrice: Number(order.totalprice),
         items: orderItems,
       };
 
@@ -36,7 +36,7 @@ class GetAllOrdersUseCase {
       return acc;
     }, []);
 
-    // console.log('groupedByOwner', groupedByOwner);
+    // console.dir(groupedByOwner, { depth: null });
 
     return groupedByOwner;
   }

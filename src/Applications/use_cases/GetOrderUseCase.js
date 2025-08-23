@@ -21,14 +21,14 @@ class GetOrderUseCase {
       const formattedOrder = {
         id: order.orderid,
         status: order.status,
-        totalPrice: Number(order.total_price),
+        totalPrice: Number(order.totalprice),
         items: orderItems,
       };
 
       // cek apakah owner sudah ada di accumulator
       let ownerGroup = acc.find((group) => group.fullname === order.fullname);
       if (!ownerGroup) {
-        ownerGroup = { owner: order.fullname, orders: [] };
+        ownerGroup = { owner: order.fullname, userId: order.user_id, orders: [] };
         acc.push(ownerGroup);
       }
 
@@ -37,7 +37,9 @@ class GetOrderUseCase {
       return acc;
     }, []);
 
-    return orderByUser;
+    // console.dir(orderByUser[0], { depth: null });
+
+    return orderByUser[0];
   }
 }
 

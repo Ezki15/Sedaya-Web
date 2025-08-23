@@ -76,7 +76,7 @@ class OrderRepositoryPostgres extends OrderRepository {
   async getAllOrders() {
     const isDeleted = false;
     const queryOrders = {
-      text: 'SELECT id as orderId, user_id as owner, status, total_price FROM orders WHERE is_deleted = $1',
+      text: 'SELECT id as orderId, user_id as owner, status, total_price as totalPrice FROM orders WHERE is_deleted = $1',
       values: [isDeleted],
     };
 
@@ -97,7 +97,7 @@ class OrderRepositoryPostgres extends OrderRepository {
   async getOrderById(userId) {
     const isDeleted = false;
     const queryOrders = {
-      text: `SELECT o.id as orderid, u.fullname, o.status, o.total_price 
+      text: `SELECT o.id as orderid, o.user_id, u.fullname, o.status, o.total_price as totalPrice
              FROM orders as o 
              LEFT JOIN users as u
              ON u.id = o.user_id
@@ -106,12 +106,15 @@ class OrderRepositoryPostgres extends OrderRepository {
     };
 
     const orders = await this._pool.query(queryOrders);
+    const getOrderId = orders.rows[0].orderid;
 
     const queryItems = {
-      text: `SELECT o.order_id, p.name, o.quantity, o.price, o.subtotal 
+      text: `SELECT o.order_id, p.name, o.product_id, o.quantity, o.price, o.subtotal 
               FROM order_items as o
               LEFT JOIN products as p 
-              ON p.id = o.product_id`,
+              ON p.id = o.product_id
+              WHERE o.order_id = $1`,
+      values: [getOrderId],
     };
 
     const itemsOrder = await this._pool.query(queryItems);

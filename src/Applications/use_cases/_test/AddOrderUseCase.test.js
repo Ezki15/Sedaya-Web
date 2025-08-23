@@ -31,6 +31,8 @@ describe('AddOrderUseCase', () => {
         price: 100000,
         stock: 50,
       }));
+    mockProductRepository.updateProduct = jest.fn()
+      .mockImplementation(() => Promise.resolve());
     mockOrderRepository.addOrder = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedAddedOrder));
 

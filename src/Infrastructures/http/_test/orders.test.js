@@ -79,6 +79,35 @@ describe('/orders endpoint', () => {
       expect(responseJson.status).toBe('fail');
     });
 
+    it('should return 400 if required fields not meet data type specification', async () => {
+      // Arrange
+      await UserTableTestHelper.addUser({ id: 'user-123', username: 'userapp' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2' });
+
+      const orderPayload = [{
+        productId: 'product-123',
+        quantity: '5',
+      },
+      {
+        productId: 'product-456',
+        quantity: 1,
+      }];
+      const userId = 'user-123';
+      const server = await createServer(container);
+
+      //   Action
+      const response = await request(server)
+        .post('/orders')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId, 'userapp')}`)
+        .send(orderPayload);
+
+      // Assert
+      const responseJson = response.body;
+      expect(response.statusCode).toBe(400);
+      expect(responseJson.status).toBe('fail');
+    });
+
     it('should return 401 when no authentication token is provided', async () => {
       // Arrange
       await UserTableTestHelper.addUser({ id: 'user-123', username: 'userapp' });
@@ -232,6 +261,7 @@ describe('/orders endpoint', () => {
 
       // Assert
       const responseJson = response.body;
+      // console.dir(responseJson, { depth: null });
       expect(response.statusCode).toBe(200);
       expect(responseJson.status).toBe('success');
       expect(responseJson.data.orders).toBeDefined();
@@ -239,21 +269,148 @@ describe('/orders endpoint', () => {
   });
 
   describe('when PATCH /orders/status', () => {
-    it('should update order and return 200', async () => {
+    it('should update order and return 200 when status compeleted', async () => {
       // Arrange
+      // test 1
       await UserTableTestHelper.addUser({
         id: 'user-123', username: 'adminapp', email: 'admnin@gmail.com', role: 'admin',
       });
-      await UserTableTestHelper.addUser({
-        id: 'user-234', username: 'userpp', email: 'userapp@gmail.com', role: 'user',
-      });
-      await OrderTableTestHelper.addOrder({ id: 'order-123', userId: 'user-234' });
-      await OrderTableTestHelper.addOrder({ id: 'order-234', userId: 'user-234' });
+      await UserTableTestHelper.addUser({ id: 'user-234', username: 'userapp1', email: 'userapp1@gmail.com' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1', price: 10000 });
+      await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2', price: 20000 });
 
-      const requestPayload = {
-        orderIds: ['order-123', 'order-234'],
-        status: 'completed',
-      };
+      const orderPayload1 = [{
+        productId: 'product-123',
+        quantity: 2,
+        price: 10000,
+      },
+      {
+        productId: 'product-456',
+        quantity: 1,
+        price: 20000,
+      }];
+      const userId1 = 'user-234';
+      // const adminId = 'user-123';
+
+      // test 2
+      await UserTableTestHelper.addUser({ id: 'user-345', username: 'userapp2', email: 'userapp2@gmail.com' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-234', name: 'Product 3', price: 10000 });
+      await ProductsTableTestHelper.addProduct({ id: 'product-567', name: 'Product 4', price: 20000 });
+
+      const orderPayload2 = [{
+        productId: 'product-234',
+        quantity: 2,
+        price: 10000,
+      },
+      {
+        productId: 'product-567',
+        quantity: 1,
+        price: 20000,
+      }];
+      const userId2 = 'user-345';
+
+      const orders1 = await request(await createServer(container))
+        .post('/orders')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`)
+        .send(orderPayload1);
+
+      const { data: dataOrder1 } = orders1.body;
+      // console.log(dataOrder1);
+      const orderId1 = dataOrder1.id;
+
+      const orders2 = await request(await createServer(container))
+        .post('/orders')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp2')}`)
+        .send(orderPayload2);
+
+      const { data: dataOrder2 } = orders2.body;
+      // console.log(dataOrder2);
+      const orderId2 = dataOrder2.id;
+
+      const requestPayload = [
+        { userId: 'user-234', orderId: orderId1, status: 'completed' },
+        { userId: 'user-234', orderId: orderId2, status: 'completed' },
+      ];
+
+      const adminId = 'user-123';
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .patch('/orders/status')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(adminId, 'adminapp')}`)
+        .send(requestPayload);
+
+      // Assert
+      const responseJson = response.body;
+      // console.dir(responseJson, { depth: null });
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+    });
+
+    it('should update order and return 200 when status cancelled', async () => {
+      // Arrange
+      // test 1
+      await UserTableTestHelper.addUser({
+        id: 'user-123', username: 'adminapp', email: 'admnin@gmail.com', role: 'admin',
+      });
+      await UserTableTestHelper.addUser({ id: 'user-234', username: 'userapp1', email: 'userapp1@gmail.com' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1', price: 10000 });
+      await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2', price: 20000 });
+
+      const orderPayload1 = [{
+        productId: 'product-123',
+        quantity: 2,
+        price: 10000,
+      },
+      {
+        productId: 'product-456',
+        quantity: 1,
+        price: 20000,
+      }];
+      const userId1 = 'user-234';
+      // const adminId = 'user-123';
+
+      // test 2
+      await UserTableTestHelper.addUser({ id: 'user-345', username: 'userapp2', email: 'userapp2@gmail.com' });
+      await ProductsTableTestHelper.addProduct({ id: 'product-234', name: 'Product 3', price: 10000 });
+      await ProductsTableTestHelper.addProduct({ id: 'product-567', name: 'Product 4', price: 20000 });
+
+      const orderPayload2 = [{
+        productId: 'product-234',
+        quantity: 2,
+        price: 10000,
+      },
+      {
+        productId: 'product-567',
+        quantity: 1,
+        price: 20000,
+      }];
+      const userId2 = 'user-345';
+
+      const orders1 = await request(await createServer(container))
+        .post('/orders')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`)
+        .send(orderPayload1);
+
+      const { data: dataOrder1 } = orders1.body;
+      // console.log(dataOrder1);
+      const orderId1 = dataOrder1.id;
+
+      const orders2 = await request(await createServer(container))
+        .post('/orders')
+        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp2')}`)
+        .send(orderPayload2);
+
+      const { data: dataOrder2 } = orders2.body;
+      // console.log(dataOrder2);
+      const orderId2 = dataOrder2.id;
+
+      const requestPayload = [
+        { userId: 'user-234', orderId: orderId1, status: 'cancelled' },
+        { userId: 'user-234', orderId: orderId2, status: 'completed' },
+      ];
       const adminId = 'user-123';
       const server = await createServer(container);
 

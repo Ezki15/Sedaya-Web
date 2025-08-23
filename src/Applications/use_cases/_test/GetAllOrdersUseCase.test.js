@@ -7,10 +7,10 @@ describe('GetAllOrdersUseCase', () => {
     // Arrange
     const mockOrders = [
       {
-        orderId: 'order-1',
+        orderid: 'order-1',
         owner: 'user-123',
         status: 'pending',
-        totalPrice: 300000,
+        totalprice: 300000,
       },
     ];
 
