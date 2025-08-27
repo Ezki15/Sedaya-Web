@@ -4,24 +4,31 @@
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('products', {
+  pgm.createTable('customers', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
+      notNull: true,
+    },
+    user_id: {
+      type: 'VARCHAR(50)',
+      notNull: true,
     },
     name: {
-      type: 'TEXT',
+      type: 'VARCHAR(100)',
       notNull: true,
     },
-    description: {
-      type: 'TEXT',
-    },
-    price: {
-      type: 'NUMERIC',
+    email: {
+      type: 'VARCHAR(100)',
       notNull: true,
     },
-    stock: {
-      type: 'INTEGER',
+    phone: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+    },
+    address: {
+      type: 'TEXT',
+      notNull: true,
     },
     is_deleted: {
       type: 'BOOLEAN',
@@ -39,6 +46,14 @@ export const up = (pgm) => {
       default: pgm.func('current_timestamp'),
     },
   });
+
+  pgm.addConstraint('customers', 'fk_customers.user_id_to_users.id', {
+    foreignKeys: {
+      columns: 'user_id',
+      references: 'users(id)',
+      onDelete: 'CASCADE',
+    },
+  });
 };
 
 /**
@@ -47,5 +62,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('products');
+  pgm.dropTable('customers');
 };
