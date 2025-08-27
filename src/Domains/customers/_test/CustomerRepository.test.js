@@ -4,9 +4,10 @@ describe('CustomerRepository interface', () => {
   it('should throw error when invoke abstrct behavior', async () => {
     const customerRepository = new CustomerRepository();
 
-    await expect(customerRepository.addUser()).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    await expect(customerRepository.verifyAvailableEmail()).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    await expect(customerRepository.getPasswordByEmail()).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    await expect(customerRepository.getIdByEmail()).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(customerRepository.addUser('')).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(customerRepository.getAllCustomer()).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(customerRepository.getCustomerById('')).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(customerRepository.updateCustomerById('')).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(customerRepository.deleteCustomerById('')).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

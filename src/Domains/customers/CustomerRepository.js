@@ -5,15 +5,19 @@ class CustomerRepository {
     throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async verifyAvailableEmail(username) {
+  async getAllCustomer() {
     throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getPasswordByEmail(email) {
+  async getCustomerById(customerId) {
     throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getIdByEmail(email) {
+  async updateCustomerById(customerId, updatePayload) {
+    throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
+  async deleteCustomerById(customerId) {
     throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 }
