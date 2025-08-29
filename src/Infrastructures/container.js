@@ -28,6 +28,10 @@ import ProductRepositoryPostgres from './repository/ProductRepositoryPostgres.js
 import OrderRepository from '../Domains/orders/OrderRepository.js';
 import OrderRepositoryPostgres from './repository/OrderRepositoryPostgres.js';
 
+// Customers
+import CustomerRepository from '../Domains/customers/CustomerRepository.js';
+import CustomerRepositoryPostgres from './repository/CustomerRepositoryPostgres.js';
+
 // use case
 // Users
 import AddUserUseCase from '../Applications/use_cases/AddUserUseCase.js';
@@ -49,6 +53,9 @@ import AddOrderUseCase from '../Applications/use_cases/AddOrderUseCase.js';
 import GetAllOrdersUseCase from '../Applications/use_cases/GetAllOrdersUseCase.js';
 import GetOrderUseCase from '../Applications/use_cases/GetOrderUseCase.js';
 import UpdateOrderUseCase from '../Applications/use_cases/UpdateOrderUseCase.js';
+
+// Customers
+import AddCustomerUseCase from '../Applications/use_cases/AddCustomerUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -90,6 +97,16 @@ container.register([
     },
   },
   {
+    key: CustomerRepository.name,
+    Class: CustomerRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        { concrete: pool },
+        { concrete: nanoid },
+      ],
+    },
+  },
+  {
     key: AuthenticationRepository.name,
     Class: AuthenticationRepositoryPostgres,
     parameter: {
@@ -123,6 +140,7 @@ container.register([
 
 // registering use cases
 container.register([
+  // Users
   {
     key: AddUserUseCase.name,
     Class: AddUserUseCase,
@@ -165,6 +183,7 @@ container.register([
       ],
     },
   },
+  // Authentications
   {
     key: RefreshAuthenticationUseCase.name,
     Class: RefreshAuthenticationUseCase,
@@ -195,6 +214,7 @@ container.register([
       ],
     },
   },
+  // Products
   {
     key: AddProductUseCase.name,
     Class: AddProductUseCase,
@@ -260,6 +280,7 @@ container.register([
       ],
     },
   },
+  // Orders
   {
     key: AddOrderUseCase.name,
     Class: AddOrderUseCase,
@@ -316,6 +337,20 @@ container.register([
         {
           name: 'productRepository',
           internal: ProductRepository.name,
+        },
+      ],
+    },
+  },
+  // Customers
+  {
+    key: AddCustomerUseCase.name,
+    Class: AddCustomerUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'customerRepository',
+          internal: CustomerRepository.name,
         },
       ],
     },

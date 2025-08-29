@@ -6,6 +6,7 @@ import usersRoutes from '../../Interfaces/routes/usersRoutes.js';
 import authenticationsRoutes from '../../Interfaces/routes/authenticationsRoutes.js';
 import productsRoutes from '../../Interfaces/routes/productsRoutes.js';
 import ordersRoutes from '../../Interfaces/routes/ordersRoutes.js';
+import customersRoutes from '../../Interfaces/routes/customersRoutes.js';
 
 const createServer = async (container) => {
   const server = express();
@@ -26,6 +27,9 @@ const createServer = async (container) => {
 
   // Orders
   server.use(ordersRoutes(container));
+
+  // Customers
+  server.use(customersRoutes(container));
 
   // Error handling middleware
   server.use(errorHandler);

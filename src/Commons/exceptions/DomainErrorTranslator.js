@@ -37,6 +37,10 @@ DomainErrorTranslator._directories = {
   'UPDATED_ORDER.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat memperbarui order karena tipe data tidak sesuai'),
   'UPDATED_ORDER.INVALID_STATUS_DATA': new InvariantError('data status tidak valid'),
 
+  // Customers
+  'NEW_CUSTOMER.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat customer baru karena properti yang dibutuhkan tidak ada'),
+  'NEW_CUSTOMER.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat customer baru karena tipe data tidak sesuai'),
+
 };
 
 export default DomainErrorTranslator;
