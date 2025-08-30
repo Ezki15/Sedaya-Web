@@ -5,6 +5,10 @@ class CustomerRepository {
     throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
+  async validateAvailableCustomer(customerId) {
+    throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
   async getAllCustomers() {
     throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }

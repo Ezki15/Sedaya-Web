@@ -4,12 +4,12 @@ class GetSingleProductUseCase {
   }
 
   async execute(productId) {
-    this._validatePayload(productId);
+    this._validateId(productId);
     await this._productRepository.validateAvailableProduct(productId);
     return this._productRepository.getProductById(productId);
   }
 
-  _validatePayload(productId) {
+  _validateId(productId) {
     if (!productId) {
       throw new Error('GET_SINGLE_PRODUCT_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY');
     }

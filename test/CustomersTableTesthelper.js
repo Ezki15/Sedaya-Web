@@ -11,10 +11,11 @@ const CustomerTableTestHelper = {
     email = 'user@gmail.com',
     phone = '6282338765456',
     address = 'Lombok Timur',
+    isDeleted = false,
   }) {
     const query = {
-      text: 'INSERT INTO customers VALUES($1, $2, $3, $4, $5, $6)',
-      values: [id, userId, name, email, phone, address],
+      text: 'INSERT INTO customers VALUES($1, $2, $3, $4, $5, $6, $7)',
+      values: [id, userId, name, email, phone, address, isDeleted],
     };
 
     await pool.query(query);

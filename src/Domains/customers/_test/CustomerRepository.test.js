@@ -5,6 +5,7 @@ describe('CustomerRepository interface', () => {
     const customerRepository = new CustomerRepository();
 
     await expect(customerRepository.addUser('')).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(customerRepository.validateAvailableCustomer('')).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(customerRepository.getAllCustomers()).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(customerRepository.getCustomerById('')).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(customerRepository.updateCustomerById('')).rejects.toThrow('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');

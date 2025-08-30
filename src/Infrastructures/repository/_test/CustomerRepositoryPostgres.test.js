@@ -3,7 +3,8 @@ import UsersTableTestHelper from '../../../../test/UsersTableTestHelper.js';
 import CustomersTableTestHelper from '../../../../test/CustomersTableTesthelper.js';
 import pool from '../../database/postgres/pool.js';
 import NewCustomer from '../../../Domains/customers/entities/NewCustomer.js';
-import CustomerRepositorPostgres from '../CustomerRepositoryPostgres';
+import CustomerRepositoryPostgres from '../CustomerRepositoryPostgres';
+import NotFoundError from '../../../Commons/exceptions/NotFoundError.js';
 
 describe('CustomerRepositoryPostgres', () => {
   afterEach(async () => {
@@ -28,7 +29,7 @@ describe('CustomerRepositoryPostgres', () => {
       };
       const newCustomer = new NewCustomer(payload, userId);
       const fakeIdGenerator = () => '123';
-      const customerRepository = new CustomerRepositorPostgres(pool, fakeIdGenerator);
+      const customerRepository = new CustomerRepositoryPostgres(pool, fakeIdGenerator);
 
       //   Action
       await customerRepository.addCustomer(newCustomer);
@@ -69,7 +70,7 @@ describe('CustomerRepositoryPostgres', () => {
       });
 
       const fakeIdGenerator = () => crypto.randomBytes(10).toString('hex');
-      const customerRepository = new CustomerRepositorPostgres(pool, fakeIdGenerator);
+      const customerRepository = new CustomerRepositoryPostgres(pool, fakeIdGenerator);
 
       // Create customer
       await customerRepository.addCustomer(newCustomer1);
@@ -82,6 +83,88 @@ describe('CustomerRepositoryPostgres', () => {
       expect(customers).toHaveLength(2);
       expect(customers[0]).toHaveProperty('id');
       expect(customers[1]).toHaveProperty('id');
+    });
+  });
+
+  describe('validateAvailableCustomer function', () => {
+    it('should not throw error if customer is available', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user123' });
+      const Customer1 = {
+        name: 'Jhoni',
+        email: 'jhone@gmail.com',
+        phone: '083492847363',
+        address: 'Lombok Timur',
+      };
+      const userId1 = 'user123';
+      const newCustomer1 = new NewCustomer(Customer1, userId1);
+
+      const fakeIdGenerator = () => '123';
+      const customerRepository = new CustomerRepositoryPostgres(pool, fakeIdGenerator);
+
+      await customerRepository.addCustomer(newCustomer1);
+
+      // Action & Assert
+      await expect(customerRepository.validateAvailableCustomer('customer-123')).resolves.not.toThrow();
+    });
+
+    it('should throw NotFoundError if customer is not available', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123';
+      const customerRepository = new CustomerRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action & Assert
+      await expect(customerRepository.validateAvailableCustomer('customer-999')).rejects.toThrow(NotFoundError);
+    });
+  });
+
+  describe('getCustomerById function', () => {
+    it('should return customer by id', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await CustomersTableTestHelper.addCustomer({
+        id: 'customer-123',
+        userId: 'user-123', // same as id from users
+        name: 'Jhoni',
+        email: 'jhone@gmail.com',
+        phone: '083492847363',
+        address: 'Lombok Timur',
+      });
+      const customerId = 'customer-123';
+      const fakeIdGenerator = () => '123';
+      const customerRepository = new CustomerRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action
+      const customer = await customerRepository.getCustomerById(customerId);
+
+      // Assert
+      expect(customer).toEqual({
+        id: 'customer-123',
+        name: 'Jhoni',
+        email: 'jhone@gmail.com',
+        phone: '083492847363',
+        address: 'Lombok Timur',
+      });
+    });
+
+    it('should throw NotFoundError if customer does not exist with is_deleted is true', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({});
+      await CustomersTableTestHelper.addCustomer({
+        id: 'customer-123',
+        userId: 'user-123',
+        name: 'Jhoni',
+        email: 'jhone@gmail.com',
+        phone: '083492847363',
+        address: 'Lombok Timur',
+        isDeleted: true,
+      });
+      const fakeIdGenerator = () => '123';
+      const customerRepository = new CustomerRepositoryPostgres(pool, fakeIdGenerator);
+      const customerId = 'customer-123';
+
+      // Action & Assert
+      await expect(customerRepository.getCustomerById(customerId)).rejects.toThrow(NotFoundError);
     });
   });
 });

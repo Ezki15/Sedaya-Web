@@ -14,7 +14,7 @@ class UpdateOrderUseCase {
       this._validatePayload(updateStatusPayload);
       const { userId, orderId, status } = updateStatusPayload;
 
-      this._orderRepository.validateAvailableOrder(orderId);
+      await this._orderRepository.validateAvailableOrder(orderId);
 
       // if the status is cancelled then the product's stock is returned like before make an order
       if (status === 'cancelled') {
