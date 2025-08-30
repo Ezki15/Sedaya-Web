@@ -36,7 +36,7 @@ describe(' /customers endpoint', () => {
       // Assert
       const responseJson = response.body;
 
-      console.log(responseJson);
+      // console.log(responseJson);
 
       expect(response.statusCode).toBe(201);
       expect(responseJson.status).toBe('success');

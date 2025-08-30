@@ -1,4 +1,4 @@
-import NotFoundError from '../../Commons/exceptions/NotFoundError.js';
+// import NotFoundError from '../../Commons/exceptions/NotFoundError.js';
 import CustomerRepository from '../../Domains/customers/CustomerRepository.js';
 
 class CustomerRepositorPostgres extends CustomerRepository {
@@ -25,6 +25,18 @@ class CustomerRepositorPostgres extends CustomerRepository {
     const result = await this._pool.query(query);
     // console.log(result.rows[0]);
     return result.rows[0];
+  }
+
+  async getAllCustomers() {
+    const isDeleted = false;
+
+    const query = {
+      text: 'SELECT * FROM customers WHERE is_deleted = $1',
+      values: [isDeleted],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows;
   }
 }
 

@@ -5,7 +5,7 @@ class CustomerRepository {
     throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getAllCustomer() {
+  async getAllCustomers() {
     throw new Error('CUSTOMER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
