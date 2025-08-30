@@ -12,6 +12,7 @@ describe(' /customers endpoint', () => {
 
   afterEach(async () => {
     await UsersTableTestHelper.cleanTable();
+    await CustomerTableTestHelper.cleanTable();
   });
 
   describe('when POST /customers', () => {
@@ -116,6 +117,43 @@ describe(' /customers endpoint', () => {
 
       expect(response.statusCode).toBe(400);
       expect(responseJson.status).toBe('fail');
+    });
+  });
+
+  describe('when GET /customers', () => {
+    it('should return all customers correctly', async () => {
+      // Arrange
+      // Create user and admin
+      await UsersTableTestHelper.addUser({
+        id: 'user-234', fullname: 'Admin App', username: 'admin', email: 'admin@gmail.com', role: 'admin',
+      });
+      await UsersTableTestHelper.addUser({}); // User as customer
+      await UsersTableTestHelper.addUser({
+        id: 'user-124', fullname: 'Jhoni', username: 'jhoniband', email: 'jhon@gmail.com',
+      });
+      // create customer
+      await CustomerTableTestHelper.addCustomer({});
+      await CustomerTableTestHelper.addCustomer({
+        id: 'customer-124',
+        userId: 'user-124',
+        name: 'Jhoni',
+        email: 'jhone@gmail.com',
+        phone: '083492847363',
+        address: 'Lombok Barat',
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .get('/customers')
+        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken('user-234', 'admin')}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
     });
   });
 });
