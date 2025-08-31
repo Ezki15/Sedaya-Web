@@ -156,4 +156,54 @@ describe(' /customers endpoint', () => {
       expect(responseJson.status).toEqual('success');
     });
   });
+
+  describe('when GET /customers/:id', () => {
+    it('should return all customers correctly', async () => {
+      // Arrange
+      // Create user
+      await UsersTableTestHelper.addUser({}); // User as customer
+      await UsersTableTestHelper.addUser({
+        id: 'user-124', fullname: 'Jhoni', username: 'jhoniband', email: 'jhon@gmail.com',
+      });
+      // create customer
+      await CustomerTableTestHelper.addCustomer({});
+      await CustomerTableTestHelper.addCustomer({
+        id: 'customer-124',
+        userId: 'user-124',
+        name: 'Jhoni',
+        email: 'jhone@gmail.com',
+        phone: '083492847363',
+        address: 'Lombok Barat',
+      }); // customer doesn't we look at
+
+      const customerId = 'customer-123';
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .get(`/customers/${customerId}`)
+        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken(customerId, 'userapp')}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+    it('should return 404 when customer not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .get('/customers/non-existing-id')
+        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken()}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+    });
+  });
 });

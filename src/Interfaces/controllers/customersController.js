@@ -1,5 +1,6 @@
 import AddCustomerUseCase from '../../Applications/use_cases/AddCustomerUseCase.js';
 import GetCustomersUseCase from '../../Applications/use_cases/GetCustomersUseCase.js';
+import GetSingleCustomerUseCase from '../../Applications/use_cases/GetSingleCustomerUseCase.js';
 
 class CustomersController {
   constructor(container) {
@@ -7,6 +8,7 @@ class CustomersController {
 
     this.postAddCustomer = this.postAddCustomer.bind(this);
     this.getCustomers = this.getCustomers.bind(this);
+    this.getSingleCustomer = this.getSingleCustomer.bind(this);
   }
 
   async postAddCustomer(req, res) {
@@ -22,6 +24,13 @@ class CustomersController {
     const getCustomersUseCase = this._container.getInstance(GetCustomersUseCase.name);
     const customers = await getCustomersUseCase.execute();
     return res.status(200).json({ status: 'success', data: customers });
+  }
+
+  async getSingleCustomer(req, res) {
+    const customerId = req.params.id;
+    const getSingleCustomerUseCase = this._container.getInstance(GetSingleCustomerUseCase.name);
+    const customer = await getSingleCustomerUseCase.execute(customerId);
+    return res.status(200).json({ status: 'success', data: customer });
   }
 }
 

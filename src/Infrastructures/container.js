@@ -57,6 +57,7 @@ import UpdateOrderUseCase from '../Applications/use_cases/UpdateOrderUseCase.js'
 // Customers
 import AddCustomerUseCase from '../Applications/use_cases/AddCustomerUseCase.js';
 import GetCustomersUseCase from '../Applications/use_cases/GetCustomersUseCase.js';
+import GetSingleCustomerUseCase from '../Applications/use_cases/GetSingleCustomerUseCase.js';
 
 // creating container
 const container = createContainer();
@@ -359,6 +360,19 @@ container.register([
   {
     key: GetCustomersUseCase.name,
     Class: GetCustomersUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'customerRepository',
+          internal: CustomerRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: GetSingleCustomerUseCase.name,
+    Class: GetSingleCustomerUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [
