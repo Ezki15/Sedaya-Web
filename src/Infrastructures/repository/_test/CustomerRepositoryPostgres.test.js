@@ -205,4 +205,22 @@ describe('CustomerRepositoryPostgres', () => {
       expect(customer[0].address).toBe(updatedCustomer.address);
     });
   });
+
+  describe('deleteCustomer function', () => {
+    it('should delete Customer by id', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({});
+      await CustomersTableTestHelper.addCustomer({ isDeleted: true });
+      const customerId = 'customer-123';
+      const fakeIdGenerator = () => '123';
+      const customerRepository = new CustomerRepositoryPostgres(pool, fakeIdGenerator);
+
+      // Action
+      await customerRepository.deleteCustomerById(customerId);
+
+      // Assert
+      const customer = await CustomersTableTestHelper.findCustomerById('customer-123');
+      expect(customer).toHaveLength(0);
+    });
+  });
 });

@@ -101,6 +101,16 @@ class CustomerRepositorPostgres extends CustomerRepository {
       address: result.rows[0].address,
     };
   }
+
+  async deleteCustomerById(customerId) {
+    const isDeleted = true;
+    const query = {
+      text: 'UPDATE customers SET is_deleted = $1 WHERE id = $2',
+      values: [isDeleted, customerId],
+    };
+
+    await this._pool.query(query);
+  }
 }
 
 export default CustomerRepositorPostgres;
