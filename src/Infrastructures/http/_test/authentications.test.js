@@ -1,5 +1,5 @@
-import pool from '../../database/postgres/pool.js';
 import request from 'supertest';
+import pool from '../../database/postgres/pool.js';
 import UsersTableTestHelper from '../../../../test/UsersTableTestHelper.js';
 import AuthenticationsTableTestHelper from '../../../../test/AuthenticationsTableTestHelper.js';
 import AuthenticationTokenManager from '../../../Applications/security/AuthenticationTokenManager.js';
@@ -17,11 +17,11 @@ describe('/authentications endpoint', () => {
   });
 
   const addUserPayload = {
-          fullname: 'User App',
-          username: 'userapp',
-          email: 'user@gmail.com',
-          password: 'secretpassword',
-          role: 'user',
+    fullname: 'User App',
+    username: 'userapp',
+    email: 'user@gmail.com',
+    password: 'secretpassword',
+    role: 'user',
   };
 
   describe('when POST /authentication ', () => {
@@ -154,13 +154,13 @@ describe('/authentications endpoint', () => {
         .post('/auth/users/register')
         .send(addUserPayload);
 
-     // login user
+      // login user
       const loginResponse = await request(server)
-      .post('/authentications')
-      .send({
-        email: 'user@gmail.com',
-        password: 'secretpassword',
-      });
+        .post('/authentications')
+        .send({
+          email: 'user@gmail.com',
+          password: 'secretpassword',
+        });
 
       const { data: { refreshToken } } = loginResponse.body;
 
@@ -170,7 +170,7 @@ describe('/authentications endpoint', () => {
         .send({
           refreshToken,
         });
-      
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(200);
@@ -188,7 +188,7 @@ describe('/authentications endpoint', () => {
         .send({
           // no refreshToken provided
         });
-      
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(400);
@@ -206,7 +206,7 @@ describe('/authentications endpoint', () => {
         .send({
           refreshToken: 12345,
         });
-      
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(400);
@@ -224,7 +224,7 @@ describe('/authentications endpoint', () => {
         .send({
           refreshToken: 'invalid_refresh_token', // intentionally invalid token
         });
-      
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(400);
@@ -261,11 +261,11 @@ describe('/authentications endpoint', () => {
 
       // Action
       const response = await request(server)
-            .del('/authentications')
-            .send({
-              refreshToken
-            });
-  
+        .del('/authentications')
+        .send({
+          refreshToken,
+        });
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(200);
@@ -279,11 +279,11 @@ describe('/authentications endpoint', () => {
 
       // Action
       const response = await request(server)
-            .del('/authentications')
-            .send({
-              refreshToken
-            });
-  
+        .del('/authentications')
+        .send({
+          refreshToken,
+        });
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(400);
@@ -296,11 +296,11 @@ describe('/authentications endpoint', () => {
 
       // Action
       const response = await request(server)
-            .del('/authentications')
-            .send({
-              // No refresh token
-            });
-  
+        .del('/authentications')
+        .send({
+          // No refresh token
+        });
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(400);
@@ -315,11 +315,11 @@ describe('/authentications endpoint', () => {
 
       // Action
       const response = await request(server)
-            .del('/authentications')
-            .send({
-              refreshToken
-            });
-  
+        .del('/authentications')
+        .send({
+          refreshToken,
+        });
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(400);

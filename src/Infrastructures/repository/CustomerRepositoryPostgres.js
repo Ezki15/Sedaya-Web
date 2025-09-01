@@ -66,7 +66,7 @@ class CustomerRepositorPostgres extends CustomerRepository {
 
     const result = await this._pool.query(query);
     if (!result.rows.length) {
-      throw new NotFoundError('Product tidak ditemukan');
+      throw new NotFoundError('Customer tidak ditemukan');
     }
 
     const row = result.rows[0];
@@ -76,6 +76,29 @@ class CustomerRepositorPostgres extends CustomerRepository {
       email: row.email,
       phone: row.phone,
       address: row.address,
+    };
+  }
+
+  async updateCustomerById(customerId, updatedCustomer) {
+    const updatedAt = new Date().toISOString();
+    const query = {
+      text: 'UPDATE customers SET name = $1, email = $2, phone = $3, address = $4, updated_at = $5 WHERE id = $6 RETURNING id, name, email, phone, address',
+      values: [
+        updatedCustomer.name,
+        updatedCustomer.email,
+        updatedCustomer.phone,
+        updatedCustomer.address,
+        updatedAt,
+        customerId,
+      ],
+    };
+
+    const result = await this._pool.query(query);
+    return {
+      name: result.rows[0].name,
+      email: result.rows[0].email,
+      phone: result.rows[0].phone,
+      address: result.rows[0].address,
     };
   }
 }

@@ -3,6 +3,7 @@ import UsersTableTestHelper from '../../../../test/UsersTableTestHelper.js';
 import CustomersTableTestHelper from '../../../../test/CustomersTableTesthelper.js';
 import pool from '../../database/postgres/pool.js';
 import NewCustomer from '../../../Domains/customers/entities/NewCustomer.js';
+import UpdatedCustomer from '../../../Domains/customers/entities/UpdatedCustomer.js';
 import CustomerRepositoryPostgres from '../CustomerRepositoryPostgres';
 import NotFoundError from '../../../Commons/exceptions/NotFoundError.js';
 
@@ -165,6 +166,43 @@ describe('CustomerRepositoryPostgres', () => {
 
       // Action & Assert
       await expect(customerRepository.getCustomerById(customerId)).rejects.toThrow(NotFoundError);
+    });
+  });
+
+  describe('updateCUstomerById function', () => {
+    it('should update Customer details', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({});
+      const userId = 'user-123';
+      const newCustomer = new NewCustomer({
+        name: 'Old Customer',
+        email: 'customer@gmail.com',
+        phone: '083746938746',
+        address: 'Lombok Lama',
+      }, userId);
+      const fakeIdGenerator = () => '123';
+      const customerId = 'customer-123';
+      const customerRepository = new CustomerRepositoryPostgres(pool, fakeIdGenerator);
+
+      await customerRepository.addCustomer(newCustomer);
+
+      const updatedCustomer = new UpdatedCustomer({
+        name: 'Updated Customer',
+        email: 'customer@gmail.com',
+        phone: '083746938746',
+        address: 'Lombok Baru',
+      }, userId);
+
+      // Action
+      await customerRepository.updateCustomerById(customerId, updatedCustomer);
+
+      // Assert
+      const customer = await CustomersTableTestHelper.findCustomerById('customer-123');
+      expect(customer).toHaveLength(1);
+      expect(customer[0].name).toBe(updatedCustomer.name);
+      expect(customer[0].email).toBe(updatedCustomer.email);
+      expect(customer[0].phone).toBe(updatedCustomer.phone);
+      expect(customer[0].address).toBe(updatedCustomer.address);
     });
   });
 });
