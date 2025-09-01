@@ -259,4 +259,43 @@ describe(' /customers endpoint', () => {
       expect(responseJson.message).toEqual('Customer tidak ada');
     });
   });
+
+  describe('when DELETE /customers/:id', () => {
+    it('should delete customer and return 200', async () => {
+      // Arrange
+      const customerId = 'customer-123'; // Mock customer ID, replace with actual ID
+      await UsersTableTestHelper.addUser({}); // Ensure an admin user exists
+      await CustomersTableTestHelper.addCustomer({ id: customerId, isDeleted: true });
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .delete(`/customers/${customerId}`)
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken('user-123', 'userapp')}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+
+    it('should return 404 when customer not found', async () => {
+      // Arrange
+      const customerId = 'non-existing-id'; // Mock non-existing customer ID
+      await UsersTableTestHelper.addUser({}); // Ensure an admin user exists
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .delete(`/customers/${customerId}`)
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken('user-123', 'userapp')}`);
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+    });
+  });
 });

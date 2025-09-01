@@ -2,6 +2,7 @@ import AddCustomerUseCase from '../../Applications/use_cases/AddCustomerUseCase.
 import GetCustomersUseCase from '../../Applications/use_cases/GetCustomersUseCase.js';
 import GetSingleCustomerUseCase from '../../Applications/use_cases/GetSingleCustomerUseCase.js';
 import UpdateCustomerUseCase from '../../Applications/use_cases/UpdateCustomerUseCase.js';
+import DeleteCustomerUseCase from '../../Applications/use_cases/DeleteCustomerUseCase.js';
 
 class CustomersController {
   constructor(container) {
@@ -11,6 +12,7 @@ class CustomersController {
     this.getCustomers = this.getCustomers.bind(this);
     this.getSingleCustomer = this.getSingleCustomer.bind(this);
     this.updateCustomer = this.updateCustomer.bind(this);
+    this.deleteCustomer = this.deleteCustomer.bind(this);
   }
 
   async postAddCustomer(req, res) {
@@ -42,6 +44,12 @@ class CustomersController {
     const updateCustomerUseCase = this._container.getInstance(UpdateCustomerUseCase.name);
     const updatedCustomer = await updateCustomerUseCase.execute(customerId, userId, updatedPayload);
     return res.status(200).json({ status: 'success', data: updatedCustomer });
+  }
+
+  async deleteCustomer(req, res) {
+    const deleteCustomerUseCase = this._container.getInstance(DeleteCustomerUseCase.name);
+    await deleteCustomerUseCase.execute(req.params.id);
+    return res.status(200).json({ status: 'success', message: 'Customer deleted successfully' });
   }
 }
 

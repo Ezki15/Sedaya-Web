@@ -15,6 +15,7 @@ const customersRoutes = (container) => {
   router.get('/customers', authenticationMiddleware, adminVerifier, customersController.getCustomers);
   router.get('/customers/:id', authenticationMiddleware, customersController.getSingleCustomer);
   router.put('/customers/:id', authenticationMiddleware, customersController.updateCustomer);
+  router.delete('/customers/:id', authenticationMiddleware, customersController.deleteCustomer);
 
   return router;
 };
