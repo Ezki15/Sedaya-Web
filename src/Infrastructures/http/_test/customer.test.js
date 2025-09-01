@@ -1,7 +1,7 @@
 import request from 'supertest';
 import pool from '../../database/postgres/pool.js';
 import UsersTableTestHelper from '../../../../test/UsersTableTestHelper.js';
-import CustomerTableTestHelper from '../../../../test/CustomersTableTesthelper.js';
+import CustomersTableTestHelper from '../../../../test/CustomersTableTesthelper.js';
 import createServer from '../CreateServer.js';
 import container from '../../container.js';
 
@@ -12,7 +12,7 @@ describe(' /customers endpoint', () => {
 
   afterEach(async () => {
     await UsersTableTestHelper.cleanTable();
-    await CustomerTableTestHelper.cleanTable();
+    await CustomersTableTestHelper.cleanTable();
   });
 
   describe('when POST /customers', () => {
@@ -31,7 +31,7 @@ describe(' /customers endpoint', () => {
       //   Action
       const response = await request(server)
         .post('/customers')
-        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken()}`) // assuming a valid token is used
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken()}`) // assuming a valid token is used
         .send(requestPayload);
 
       // Assert
@@ -84,7 +84,7 @@ describe(' /customers endpoint', () => {
       //   Action
       const response = await request(server)
         .post('/customers')
-        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken()}`) // assuming a valid token is used
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken()}`) // assuming a valid token is used
         .send(requestPayload);
 
       // Assert
@@ -109,7 +109,7 @@ describe(' /customers endpoint', () => {
       //   Action
       const response = await request(server)
         .post('/customers')
-        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken()}`) // assuming a valid token is used
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken()}`) // assuming a valid token is used
         .send(requestPayload);
 
       // Assert
@@ -132,8 +132,8 @@ describe(' /customers endpoint', () => {
         id: 'user-124', fullname: 'Jhoni', username: 'jhoniband', email: 'jhon@gmail.com',
       });
       // create customer
-      await CustomerTableTestHelper.addCustomer({});
-      await CustomerTableTestHelper.addCustomer({
+      await CustomersTableTestHelper.addCustomer({});
+      await CustomersTableTestHelper.addCustomer({
         id: 'customer-124',
         userId: 'user-124',
         name: 'Jhoni',
@@ -147,7 +147,7 @@ describe(' /customers endpoint', () => {
       // Action
       const response = await request(server)
         .get('/customers')
-        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken('user-234', 'admin')}`);
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken('user-234', 'admin')}`);
 
       // Assert
       const responseJson = response.body;
@@ -166,8 +166,8 @@ describe(' /customers endpoint', () => {
         id: 'user-124', fullname: 'Jhoni', username: 'jhoniband', email: 'jhon@gmail.com',
       });
       // create customer
-      await CustomerTableTestHelper.addCustomer({});
-      await CustomerTableTestHelper.addCustomer({
+      await CustomersTableTestHelper.addCustomer({});
+      await CustomersTableTestHelper.addCustomer({
         id: 'customer-124',
         userId: 'user-124',
         name: 'Jhoni',
@@ -182,7 +182,7 @@ describe(' /customers endpoint', () => {
       // Action
       const response = await request(server)
         .get(`/customers/${customerId}`)
-        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken(customerId, 'userapp')}`);
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken(customerId, 'userapp')}`);
 
       // Assert
       const responseJson = response.body;
@@ -197,13 +197,66 @@ describe(' /customers endpoint', () => {
       // Action
       const response = await request(server)
         .get('/customers/non-existing-id')
-        .set('Authorization', `Bearer ${await CustomerTableTestHelper.generateMockToken()}`);
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken()}`);
 
       // Assert
       const responseJson = response.body;
 
       expect(response.statusCode).toEqual(404);
       expect(responseJson.status).toEqual('fail');
+    });
+  });
+
+  describe('when PUT /customers/:id', () => {
+    it('should update customer and return 200', async () => {
+      // Arrange
+      const userId = 'user-123';
+      const customerId = 'customer-123'; // Mock customer ID, replace with actual ID
+      await UsersTableTestHelper.addUser({ id: userId, username: 'userapp' });
+      await CustomersTableTestHelper.addCustomer({ id: customerId });
+      const requestPayload = {
+        name: 'Updated Customer',
+        email: 'customer@gmail.com',
+        phone: '087645376829',
+        address: 'Lombok Baru',
+      };
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .put(`/customers/${customerId}`)
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken(userId, 'userapp')}`)
+        .send(requestPayload);
+
+      // Assert
+      const responseJson = response.body;
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+    });
+
+    it('should return 404 when customer not found', async () => {
+      // Arrange
+      const customerId = 'non-existing-id'; // Mock non-existing customer ID
+      const requestPayload = {
+        name: 'Updated Customer',
+        email: 'customer@gmail.com',
+        phone: '087645376829',
+        address: 'Lombok Baru',
+      };
+      const userId = 'user-123';
+      await UsersTableTestHelper.addUser({ id: userId, username: 'userapp' });
+      const server = await createServer(container);
+      // Action
+      const response = await request(server)
+        .put(`/customers/${customerId}`)
+        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken(userId, 'userapp')}`)
+        .send(requestPayload);
+      // Assert
+      const responseJson = response.body;
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Customer tidak ada');
     });
   });
 });

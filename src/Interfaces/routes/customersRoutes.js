@@ -14,6 +14,7 @@ const customersRoutes = (container) => {
   router.post('/customers', authenticationMiddleware, customersController.postAddCustomer);
   router.get('/customers', authenticationMiddleware, adminVerifier, customersController.getCustomers);
   router.get('/customers/:id', authenticationMiddleware, customersController.getSingleCustomer);
+  router.put('/customers/:id', authenticationMiddleware, customersController.updateCustomer);
 
   return router;
 };
