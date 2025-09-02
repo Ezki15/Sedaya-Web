@@ -1,5 +1,6 @@
 .env
-/node_modules
-/config
+/backend/node_modules
+/backend/config
 pnpm-lock.yaml
-/coverage
+/backend/coverage
+node_modules

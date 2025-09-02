@@ -1,4 +1,4 @@
-import NewCustomer from '../../Domains/customers/entities/NewCustomer';
+import NewCustomer from '../../Domains/customers/entities/NewCustomer.js';
 
 class AddCustomerUseCase {
   constructor({ customerRepository }) {
