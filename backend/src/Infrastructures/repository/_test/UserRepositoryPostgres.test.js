@@ -114,6 +114,28 @@ describe('UserRepositoryPostgres', () => {
         expect(userId).toBe('user-123');
       });
     });
+
+    describe('getRoleByEmail function', () => {
+      it('should throw InvariantError when email not found', async () => {
+      // Arrange
+        const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+        // Action & Assert
+        await expect(userRepositoryPostgres.getRoleByEmail('user@gmail.com')).rejects.toThrow(InvariantError);
+      });
+
+      it('should return user role when email found', async () => {
+      // Arrange
+        await UsersTableTestHelper.addUser({ email: 'user@gmail.com', id: 'user-123', role: 'user' });
+        const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+        // Action
+        const userRole = await userRepositoryPostgres.getRoleByEmail('user@gmail.com');
+
+        // Assert
+        expect(userRole).toBe('user');
+      });
+    });
   });
 
   describe('verifyAdmin function', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-expressions */
 import LoginUser from '../../Domains/users/entities/LoginUser.js';
@@ -25,8 +26,10 @@ export default class LoginUserUseCase {
 
     const id = await this._userRepository.getIdByEmail(email);
 
-    const accessToken = await this._authenticationTokenManager.createAccessToken({ email, id });
-    const refreshToken = await this._authenticationTokenManager.createRefreshToken({ email, id });
+    const role = await this._userRepository.getRoleByEmail(email);
+
+    const accessToken = await this._authenticationTokenManager.createAccessToken({ email, id, role });
+    const refreshToken = await this._authenticationTokenManager.createRefreshToken({ email, id, role });
 
     const newAuthentication = new NewAuthentication({
       accessToken,

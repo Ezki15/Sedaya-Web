@@ -8,7 +8,6 @@ export default function Navbar() {
             <div className="flex space-x-6">
             <li><Link to="/register" className="hover:underline">Register</Link></li>
             <li><Link to="/login" className="hover:underline">Login</Link></li>
-            <li><Link to="/admin" className="hover:underline">Admin Panel</Link></li>
             </div>
         </ul>
     </nav>

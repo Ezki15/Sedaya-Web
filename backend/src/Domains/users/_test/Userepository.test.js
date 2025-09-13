@@ -10,5 +10,6 @@ describe('UserRepository interface', () => {
     await expect(userRepository.verifyAdmin()).rejects.toThrow('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(userRepository.getPasswordByEmail()).rejects.toThrow('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(userRepository.getIdByEmail()).rejects.toThrow('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(userRepository.getRoleByEmail()).rejects.toThrow('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

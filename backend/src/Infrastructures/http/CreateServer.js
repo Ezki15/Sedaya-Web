@@ -1,8 +1,8 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-unused-vars */
 import express from 'express';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import errorHandler from '../../Interfaces/middlewares/errorHanlder.js';
 import usersRoutes from '../../Interfaces/routes/usersRoutes.js';
 import authenticationsRoutes from '../../Interfaces/routes/authenticationsRoutes.js';
@@ -14,7 +14,11 @@ const createServer = async (container) => {
   const server = express();
 
   server.use(express.json());
-  server.use(cors());
+  server.use(cors({
+    origin: process.env.FRONTEND_URL, // asal frontend
+    credentials: true,
+  }));
+  server.use(cookieParser());
 
   // routes
   // Home

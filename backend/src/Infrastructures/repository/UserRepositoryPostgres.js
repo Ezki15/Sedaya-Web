@@ -77,6 +77,19 @@ class UserRepositoryPostgres extends UserRepository {
     return result.rows[0].id;
   }
 
+  async getRoleByEmail(email) {
+    const query = {
+      text: 'SELECT role FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new InvariantError('email tidak ditemukan');
+    }
+    return result.rows[0].role;
+  }
+
   async verifyAdmin(userId) {
     const query = {
       text: 'SELECT role FROM users WHERE id = $1 ',

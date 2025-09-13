@@ -29,6 +29,7 @@ describe('GetAuthenticationUseCase', () => {
     mockAuthenticationTokenManager.createAccessToken = jest.fn().mockImplementation(() => Promise.resolve(mockedAuthentication.accessToken));
     mockAuthenticationTokenManager.createRefreshToken = jest.fn().mockImplementation(() => Promise.resolve(mockedAuthentication.refreshToken));
     mockUserRepository.getIdByEmail = jest.fn().mockImplementation(() => Promise.resolve('user-123'));
+    mockUserRepository.getRoleByEmail = jest.fn().mockImplementation(() => Promise.resolve('user'));
     mockedAuthenticationRepository.addToken = jest.fn().mockImplementation(() => Promise.resolve());
 
     //   create use case instance
@@ -50,8 +51,8 @@ describe('GetAuthenticationUseCase', () => {
     expect(mockUserRepository.getPasswordByEmail).toHaveBeenCalledWith('email123@gmail.com');
     expect(mockPasswordHash.comparePassword).toHaveBeenCalledWith('secret', 'encrypt_password');
     expect(mockUserRepository.getIdByEmail).toHaveBeenCalledWith('email123@gmail.com');
-    expect(mockAuthenticationTokenManager.createAccessToken).toHaveBeenCalledWith({ email: 'email123@gmail.com', id: 'user-123' });
-    expect(mockAuthenticationTokenManager.createRefreshToken).toHaveBeenCalledWith({ email: 'email123@gmail.com', id: 'user-123' });
+    expect(mockAuthenticationTokenManager.createAccessToken).toHaveBeenCalledWith({ email: 'email123@gmail.com', id: 'user-123', role: 'user' });
+    expect(mockAuthenticationTokenManager.createRefreshToken).toHaveBeenCalledWith({ email: 'email123@gmail.com', id: 'user-123', role: 'user' });
     expect(mockedAuthenticationRepository.addToken).toHaveBeenCalledWith(mockedAuthentication.refreshToken);
   });
 });
