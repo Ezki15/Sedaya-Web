@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import AdminPanel from "./pages/AdminPanel";
 import Navbar from "./components/Navbar"; // pastikan folder components ada
+import Logout from "./pages/Logout";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/logout" element={<Logout />} />
       </Routes>
     </Router>
   );

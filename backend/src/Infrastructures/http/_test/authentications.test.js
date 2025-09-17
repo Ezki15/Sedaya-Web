@@ -262,9 +262,7 @@ describe('/authentications endpoint', () => {
       // Action
       const response = await request(server)
         .del('/authentications')
-        .send({
-          refreshToken,
-        });
+        .set('Cookie', [`accessToken=${refreshToken}`]);
 
       // Assert
       const responseJson = response.body;
@@ -280,51 +278,13 @@ describe('/authentications endpoint', () => {
       // Action
       const response = await request(server)
         .del('/authentications')
-        .send({
-          refreshToken,
-        });
+        .set('Cookie', [`accessToken=${refreshToken}`]);
 
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('refresh token tidak ditemukan di database');
-    });
-
-    it('should response 400 if payload not contain refresh token', async () => {
-      const server = await createServer(container);
-
-      // Action
-      const response = await request(server)
-        .del('/authentications')
-        .send({
-          // No refresh token
-        });
-
-      // Assert
-      const responseJson = response.body;
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('harus mengirimkan token refresh');
-    });
-
-    it('should response 400 if refresh token not string', async () => {
-      const server = await createServer(container);
-      const refreshToken = 12345;
-      await AuthenticationsTableTestHelper.addToken(refreshToken);
-
-      // Action
-      const response = await request(server)
-        .del('/authentications')
-        .send({
-          refreshToken,
-        });
-
-      // Assert
-      const responseJson = response.body;
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('refresh token harus string');
     });
   });
 });

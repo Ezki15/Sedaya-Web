@@ -27,8 +27,9 @@ class AuthenticationsController {
   }
 
   async deleteAuthenticationHandler(req, res) {
+    const useCasePayload = req.cookies.accessToken;
     const logoutUserUserCase = this._container.getInstance(LogoutUserUseCase.name);
-    await logoutUserUserCase.execute(req.body);
+    await logoutUserUserCase.execute({ refreshToken: useCasePayload });
     res.clearCookie('accessToken', { httpOnly: true, secure: false, sameSite: 'Lax' });
     return res.status(200).json({ status: 'success' });
   }
