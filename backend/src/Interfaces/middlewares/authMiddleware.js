@@ -3,13 +3,11 @@
 
 const authenticationMiddleware = (tokenManager) => async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) throw new Error('AUTHENTICATION.MISSING_TOKEN');
-
-    const token = authHeader.replace('Bearer ', '').trim();
-    if (!token) throw new Error('AUTHENTICATION.EMPTY_TOKEN');
+    const token = req.cookies.accessToken;
+    if (!token) throw new Error('AUTHENTICATION.MISSING_TOKEN');
 
     const payload = await tokenManager.decodePayload(token);
+    // console.log('ini adalah payload dari decode token', payload);
 
     req.auth = payload; // inject ke request untuk digunakan downstream
     next();

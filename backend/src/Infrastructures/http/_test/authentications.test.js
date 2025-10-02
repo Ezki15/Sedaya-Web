@@ -262,7 +262,7 @@ describe('/authentications endpoint', () => {
       // Action
       const response = await request(server)
         .del('/authentications')
-        .set('Cookie', [`accessToken=${refreshToken}`]);
+        .set('Cookie', `accessToken=${refreshToken}`);
 
       // Assert
       const responseJson = response.body;
@@ -278,13 +278,31 @@ describe('/authentications endpoint', () => {
       // Action
       const response = await request(server)
         .del('/authentications')
-        .set('Cookie', [`accessToken=${refreshToken}`]);
+        .set('Cookie', `accessToken=${refreshToken}`);
 
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('refresh token tidak ditemukan di database');
+    });
+  });
+
+  describe('when GET /authentications', () => {
+    it('should return authentication value correctly', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .get('/authentications/me')
+        .set('Cookie', `accessToken=${await AuthenticationsTableTestHelper.generateMockToken({})}`);
+
+      // Assert
+      const responseJson = response.body;
+      // console.log(responseJson);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
     });
   });
 });

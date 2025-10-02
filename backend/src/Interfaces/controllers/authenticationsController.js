@@ -10,6 +10,7 @@ class AuthenticationsController {
     this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
     this.putAuthenticationHandler = this.putAuthenticationHandler.bind(this);
     this.deleteAuthenticationHandler = this.deleteAuthenticationHandler.bind(this);
+    this.getAuthenticationHandler = this.getAuthenticationHandler.bind(this);
   }
 
   async postAuthenticationHandler(req, res) {
@@ -17,6 +18,11 @@ class AuthenticationsController {
     const loggedInUser = await loginUserUseCase.execute(req.body);
     res.cookie('accessToken', loggedInUser.accessToken, { httpOnly: true, secure: false, sameSite: 'Lax' });
     return res.status(201).json({ status: 'success', data: loggedInUser });
+  }
+
+  async getAuthenticationHandler(req, res) {
+    const authValue = req.auth;
+    return res.status(200).json({ status: 'success', data: authValue });
   }
 
   async putAuthenticationHandler(req, res) {

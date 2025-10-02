@@ -32,10 +32,11 @@ const CustomerTableTestHelper = {
     return result.rows;
   },
 
-  async generateMockToken(id = 'user-123', username = 'userapp') {
+  async generateMockToken({ id = 'user-123', email = 'userapp@gmail.com', role = 'user' }) {
     const payload = {
       id,
-      username,
+      email,
+      role,
     };
     return Jwt.sign(payload, process.env.ACCESS_TOKEN_KEY);
   },

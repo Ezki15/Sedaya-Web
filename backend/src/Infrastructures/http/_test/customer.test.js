@@ -18,7 +18,7 @@ describe(' /customers endpoint', () => {
   describe('when POST /customers', () => {
     it('should response 201 and persisted customer', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({});
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' });
       const requestPayload = {
         name: 'User App',
         email: 'user@gmail.com',
@@ -31,7 +31,7 @@ describe(' /customers endpoint', () => {
       //   Action
       const response = await request(server)
         .post('/customers')
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken()}`) // assuming a valid token is used
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: 'user-123', email: 'userapp@gmail.com' })}`) // assuming a valid token is used
         .send(requestPayload);
 
       // Assert
@@ -46,7 +46,7 @@ describe(' /customers endpoint', () => {
 
     it('should response 401 when no authentication token is provided', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({});
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' });
       const requestPayload = {
         name: 'User App',
         email: 'user@gmail.com',
@@ -71,7 +71,7 @@ describe(' /customers endpoint', () => {
 
     it('should reponse 400 when request payload not contain needed property', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({});
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' });
       const requestPayload = {
         name: 'User App',
         email: 'user@gmail.com',
@@ -84,7 +84,7 @@ describe(' /customers endpoint', () => {
       //   Action
       const response = await request(server)
         .post('/customers')
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken()}`) // assuming a valid token is used
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: 'user-123', email: 'userapp@gmail.com' })}`) // assuming a valid token is used
         .send(requestPayload);
 
       // Assert
@@ -96,7 +96,7 @@ describe(' /customers endpoint', () => {
 
     it('should reponse 400 when request payload has invalid data type', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({});
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' });
       const requestPayload = {
         name: 'User App',
         email: 'user@gmail.com',
@@ -109,7 +109,7 @@ describe(' /customers endpoint', () => {
       //   Action
       const response = await request(server)
         .post('/customers')
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken()}`) // assuming a valid token is used
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: 'user-123', email: 'userapp@gmail.com' })}`) // assuming a valid token is used
         .send(requestPayload);
 
       // Assert
@@ -147,7 +147,7 @@ describe(' /customers endpoint', () => {
       // Action
       const response = await request(server)
         .get('/customers')
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken('user-234', 'admin')}`);
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: 'user-234', email: 'admin@gmail.com', role: 'admin' })}`);
 
       // Assert
       const responseJson = response.body;
@@ -161,7 +161,7 @@ describe(' /customers endpoint', () => {
     it('should return all customers correctly', async () => {
       // Arrange
       // Create user
-      await UsersTableTestHelper.addUser({}); // User as customer
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' }); // User as customer
       await UsersTableTestHelper.addUser({
         id: 'user-124', fullname: 'Jhoni', username: 'jhoniband', email: 'jhon@gmail.com',
       });
@@ -182,7 +182,7 @@ describe(' /customers endpoint', () => {
       // Action
       const response = await request(server)
         .get(`/customers/${customerId}`)
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken(customerId, 'userapp')}`);
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: 'user-123', email: 'userapp@gmail.com' })}`);
 
       // Assert
       const responseJson = response.body;
@@ -197,7 +197,7 @@ describe(' /customers endpoint', () => {
       // Action
       const response = await request(server)
         .get('/customers/non-existing-id')
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken()}`);
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({})}`);
 
       // Assert
       const responseJson = response.body;
@@ -225,7 +225,7 @@ describe(' /customers endpoint', () => {
       // Action
       const response = await request(server)
         .put(`/customers/${customerId}`)
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken(userId, 'userapp')}`)
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: 'user-123', email: 'userapp@gmail.com' })}`)
         .send(requestPayload);
 
       // Assert
@@ -245,12 +245,12 @@ describe(' /customers endpoint', () => {
         address: 'Lombok Baru',
       };
       const userId = 'user-123';
-      await UsersTableTestHelper.addUser({ id: userId, username: 'userapp' });
+      await UsersTableTestHelper.addUser({ id: userId, email: 'userapp@gmail.com' });
       const server = await createServer(container);
       // Action
       const response = await request(server)
         .put(`/customers/${customerId}`)
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken(userId, 'userapp')}`)
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: userId, email: 'userapp@gmail.com' })}`)
         .send(requestPayload);
       // Assert
       const responseJson = response.body;
@@ -264,14 +264,14 @@ describe(' /customers endpoint', () => {
     it('should delete customer and return 200', async () => {
       // Arrange
       const customerId = 'customer-123'; // Mock customer ID, replace with actual ID
-      await UsersTableTestHelper.addUser({}); // Ensure an admin user exists
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com', role: 'admin' }); // Ensure an admin user exists
       await CustomersTableTestHelper.addCustomer({ id: customerId, isDeleted: true });
       const server = await createServer(container);
 
       // Action
       const response = await request(server)
         .delete(`/customers/${customerId}`)
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken('user-123', 'userapp')}`);
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: 'user-123', email: 'userapp@gmail.com', role: 'admin' })}`);
 
       // Assert
       const responseJson = response.body;
@@ -283,13 +283,13 @@ describe(' /customers endpoint', () => {
     it('should return 404 when customer not found', async () => {
       // Arrange
       const customerId = 'non-existing-id'; // Mock non-existing customer ID
-      await UsersTableTestHelper.addUser({}); // Ensure an admin user exists
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com', role: 'admin' }); // Ensure an admin user exists
       const server = await createServer(container);
 
       // Action
       const response = await request(server)
         .delete(`/customers/${customerId}`)
-        .set('Authorization', `Bearer ${await CustomersTableTestHelper.generateMockToken('user-123', 'userapp')}`);
+        .set('Cookie', `accessToken=${await CustomersTableTestHelper.generateMockToken({ id: 'user-123', email: 'userapp@gmail.com', role: 'admin' })}`);
 
       // Assert
       const responseJson = response.body;

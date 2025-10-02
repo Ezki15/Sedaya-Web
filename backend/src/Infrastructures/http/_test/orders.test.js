@@ -20,7 +20,7 @@ describe('/orders endpoint', () => {
   describe('POST /orders', () => {
     it('should response 201 and persisted order', async () => {
     // Arrange
-      await UserTableTestHelper.addUser({ id: 'user-123', username: 'userapp' });
+      await UserTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' });
       await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1', price: 10000 });
       await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2', price: 20000 });
 
@@ -39,7 +39,7 @@ describe('/orders endpoint', () => {
       const server = await createServer(container);
       const response = await request(server)
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId, 'userapp')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId, email: 'userapp@gmail.com' })}`)
         .send(orderPayload);
 
       // Assert
@@ -52,7 +52,7 @@ describe('/orders endpoint', () => {
 
     it('should return 400 if required fields are missing', async () => {
       // Arrange
-      await UserTableTestHelper.addUser({ id: 'user-123', username: 'userapp' });
+      await UserTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' });
       await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1' });
       await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2' });
 
@@ -70,7 +70,7 @@ describe('/orders endpoint', () => {
       //   Action
       const response = await request(server)
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId, 'userapp')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId, email: 'userapp@gmail.com' })}`)
         .send(orderPayload);
 
       // Assert
@@ -81,7 +81,7 @@ describe('/orders endpoint', () => {
 
     it('should return 400 if required fields not meet data type specification', async () => {
       // Arrange
-      await UserTableTestHelper.addUser({ id: 'user-123', username: 'userapp' });
+      await UserTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' });
       await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1' });
       await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2' });
 
@@ -99,7 +99,7 @@ describe('/orders endpoint', () => {
       //   Action
       const response = await request(server)
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId, 'userapp')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId, email: 'userapp@gmail.com' })}`)
         .send(orderPayload);
 
       // Assert
@@ -110,7 +110,7 @@ describe('/orders endpoint', () => {
 
     it('should return 401 when no authentication token is provided', async () => {
       // Arrange
-      await UserTableTestHelper.addUser({ id: 'user-123', username: 'userapp' });
+      await UserTableTestHelper.addUser({ id: 'user-123', email: 'userapp@gmail.com' });
       await ProductsTableTestHelper.addProduct({ id: 'product-123', name: 'Product 1' });
       await ProductsTableTestHelper.addProduct({ id: 'product-456', name: 'Product 2' });
 
@@ -179,18 +179,18 @@ describe('/orders endpoint', () => {
 
       await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId1, email: 'userapp1@gmail.com' })}`)
         .send(orderPayload1);
 
       await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp2')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId2, email: 'userapp2@gmail.com' })}`)
         .send(orderPayload2);
 
       // Action
       const response = await request(await createServer(container))
         .get('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(adminId, 'adminapp')}`);
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: adminId, email: 'adminapp@gmail.com', role: 'admin' })}`);
 
       // Assert
       const responseJson = response.body;
@@ -243,21 +243,21 @@ describe('/orders endpoint', () => {
 
       const orders1 = await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId1, emial: 'userapp1@gmail.com' })}`)
         .send(orderPayload1);
 
       const { data } = orders1.body;
 
       await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp2')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId2, email: 'userapp2@gmail.com' })}`)
         .send(orderPayload2);
 
       // Action
       const orderId = data.id;
       const response = await request(await createServer(container))
         .get(`/orders/${orderId}`)
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`);
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId1, email: 'userapp1@gmail.com' })}`);
 
       // Assert
       const responseJson = response.body;
@@ -311,7 +311,7 @@ describe('/orders endpoint', () => {
 
       const orders1 = await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId1, email: 'userapp1@gmail.com' })}`)
         .send(orderPayload1);
 
       const { data: dataOrder1 } = orders1.body;
@@ -320,7 +320,7 @@ describe('/orders endpoint', () => {
 
       const orders2 = await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp2')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId2, email: 'userapp2@gmail.com' })}`)
         .send(orderPayload2);
 
       const { data: dataOrder2 } = orders2.body;
@@ -338,7 +338,7 @@ describe('/orders endpoint', () => {
       // Action
       const response = await request(server)
         .patch('/orders/status')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(adminId, 'adminapp')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: adminId, email: 'adminapp@gmail.com', role: 'admin' })}`)
         .send(requestPayload);
 
       // Assert
@@ -391,7 +391,7 @@ describe('/orders endpoint', () => {
 
       const orders1 = await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId1, 'userapp1')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId1, email: 'userapp1@gmail.com' })}`)
         .send(orderPayload1);
 
       const { data: dataOrder1 } = orders1.body;
@@ -400,7 +400,7 @@ describe('/orders endpoint', () => {
 
       const orders2 = await request(await createServer(container))
         .post('/orders')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(userId2, 'userapp2')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: userId2, email: 'userapp2@gmail.com' })}`)
         .send(orderPayload2);
 
       const { data: dataOrder2 } = orders2.body;
@@ -417,7 +417,7 @@ describe('/orders endpoint', () => {
       // Action
       const response = await request(server)
         .patch('/orders/status')
-        .set('Authorization', `Bearer ${await OrderTableTestHelper.generateMockToken(adminId, 'adminapp')}`)
+        .set('Cookie', `accessToken=${await OrderTableTestHelper.generateMockToken({ id: adminId, email: 'adminapp@gmail.com', role: 'admin' })}`)
         .send(requestPayload);
 
       // Assert

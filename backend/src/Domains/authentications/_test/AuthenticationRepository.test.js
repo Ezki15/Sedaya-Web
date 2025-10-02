@@ -7,7 +7,7 @@ describe('AuthenticationRepository', () => {
 
     // Act & Assert
     await expect(authenticationRepository.addToken({})).rejects.toThrow('AUTHENTICATION_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    await expect(authenticationRepository.getToken({})).rejects.toThrow('AUTHENTICATION_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(authenticationRepository.getTokenValue({})).rejects.toThrow('AUTHENTICATION_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(authenticationRepository.checkAvailabilityToken({})).rejects.toThrow('AUTHENTICATION_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(authenticationRepository.deleteToken({})).rejects.toThrow('AUTHENTICATION_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });

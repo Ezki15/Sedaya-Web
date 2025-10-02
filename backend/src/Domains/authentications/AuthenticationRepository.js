@@ -3,7 +3,7 @@ class AuthenticationRepository {
     throw new Error('AUTHENTICATION_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getToken() {
+  async getTokenValue() {
     throw new Error('AUTHENTICATION_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 

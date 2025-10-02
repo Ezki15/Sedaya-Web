@@ -28,8 +28,8 @@ export default class LoginUserUseCase {
 
     const role = await this._userRepository.getRoleByEmail(email);
 
-    const accessToken = await this._authenticationTokenManager.createAccessToken({ email, id, role });
-    const refreshToken = await this._authenticationTokenManager.createRefreshToken({ email, id, role });
+    const accessToken = await this._authenticationTokenManager.createAccessToken({ id, email, role });
+    const refreshToken = await this._authenticationTokenManager.createRefreshToken({ id, email, role });
 
     const newAuthentication = new NewAuthentication({
       accessToken,

@@ -12,7 +12,7 @@ function adminVerifier(userRepository) {
     } catch (err) {
       return res.status(403).json({
         status: 'fail',
-        message: 'Akses dilarang',
+        message: err.message || 'Akses dilarang',
       });
     }
   };

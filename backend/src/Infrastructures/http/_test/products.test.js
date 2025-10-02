@@ -31,7 +31,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .post('/products')
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`) // assuming a valid token is used
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`) // assuming a valid token is used
         .send(requestPayload);
 
       // Assert
@@ -44,7 +44,7 @@ describe(' /products endpoint', () => {
 
     it('should response 403 when user not admin', async () => {
       // Arrange
-      await UserTableTestHelper.addUser({ id: 'user-234', username: 'userNonAdmin', role: 'user' }); // Ensure a non-admin user exists
+      await UserTableTestHelper.addUser({ id: 'user-234', email: 'userNonAdmin@gmail.com', role: 'user' }); // Ensure a non-admin user exists
       const requestPayload = {
         name: 'Product A',
         description: 'Description of Product A',
@@ -57,7 +57,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .post('/products')
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken('user-234', 'userNonAdmin')}`) // assuming a valid token is used
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ id: 'user-234', email: 'userNonAdmin@gmail.com', role: 'user' })}`) // assuming a valid token is used
         .send(requestPayload);
 
       // Assert
@@ -105,7 +105,7 @@ describe(' /products endpoint', () => {
     // Action
     const response = await request(server)
       .post('/products')
-      .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`)
+      .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
       .send(requestPayload);
 
     // Assert
@@ -128,7 +128,7 @@ describe(' /products endpoint', () => {
     // Action
     const response = await request(server)
       .post('/products')
-      .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`)
+      .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
       .send(requestPayload);
 
     // Assert
@@ -151,7 +151,7 @@ describe(' /products endpoint', () => {
     // Action
     const response = await request(server)
       .post('/products')
-      .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`)
+      .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
       .send(requestPayload);
 
     // Assert
@@ -177,7 +177,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .put(`/products/${productId}`)
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`)
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
         .send(requestPayload);
       // Assert
       const responseJson = response.body;
@@ -199,7 +199,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .put(`/products/${productId}`)
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`)
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
         .send(requestPayload);
       // Assert
       const responseJson = response.body;
@@ -217,12 +217,12 @@ describe(' /products endpoint', () => {
         price: 15000,
         stock: 25,
       };
-      await UserTableTestHelper.addUser({ id: 'user-234', username: 'userNonAdmin', role: 'user' }); // Ensure a non-admin user exists
+      await UserTableTestHelper.addUser({ id: 'user-234', email: 'userNonAdmin@gmail.com', role: 'user' }); // Ensure a non-admin user exists
       const server = await createServer(container);
       // Action
       const response = await request(server)
         .put(`/products/${productId}`)
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken('user-234', 'userNonAdmin')}`)
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ id: 'user-234', email: 'userNonAdmin@gmail.com' })}`)
         .send(requestPayload);
       // Assert
       const responseJson = response.body;
@@ -241,7 +241,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .get('/products')
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`);
 
       // Assert
       const responseJson = response.body;
@@ -261,7 +261,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .get(`/products/${productId}`)
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`);
 
       // Assert
       const responseJson = response.body;
@@ -278,7 +278,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .get('/products/non-existing-id')
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`);
 
       // Assert
       const responseJson = response.body;
@@ -299,7 +299,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .delete(`/products/${productId}`)
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`);
 
       // Assert
       const responseJson = response.body;
@@ -317,7 +317,7 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .delete(`/products/${productId}`)
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken()}`);
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`);
 
       // Assert
       const responseJson = response.body;
@@ -330,13 +330,13 @@ describe(' /products endpoint', () => {
       // Arrange
       const productId = 'product-123'; // Mock product ID, replace with actual ID
       await ProductsTableTestHelper.addProduct({ id: productId });
-      await UserTableTestHelper.addUser({ id: 'user-234', username: 'userNonAdmin', role: 'user' }); // Ensure a non-admin user exists
+      await UserTableTestHelper.addUser({ id: 'user-234', email: 'userNonAdmin@gmail.com', role: 'user' }); // Ensure a non-admin user exists
       const server = await createServer(container);
 
       // Action
       const response = await request(server)
         .delete(`/products/${productId}`)
-        .set('Authorization', `Bearer ${await ProductsTableTestHelper.generateMockToken('user-234', 'userNonAdmin')}`);
+        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ id: 'user-234', email: 'userNonAdmin@gmail.com' })}`);
 
       // Assert
       const responseJson = response.body;
