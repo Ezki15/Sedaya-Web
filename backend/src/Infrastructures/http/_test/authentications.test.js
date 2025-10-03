@@ -269,23 +269,6 @@ describe('/authentications endpoint', () => {
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
     });
-
-    it('should response 400 if refresh token not registered in database', async () => {
-      // Arrange
-      const server = await createServer(container);
-      const refreshToken = 'refresh_token';
-
-      // Action
-      const response = await request(server)
-        .del('/authentications')
-        .set('Cookie', `accessToken=${refreshToken}`);
-
-      // Assert
-      const responseJson = response.body;
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('refresh token tidak ditemukan di database');
-    });
   });
 
   describe('when GET /authentications', () => {

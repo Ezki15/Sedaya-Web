@@ -5,7 +5,6 @@ export default class LogoutUserUseCase {
 
   async execute(useCasePayload) {
     const { refreshToken } = useCasePayload;
-    await this._authenticationRepository.checkAvailabilityToken(refreshToken);
     await this._authenticationRepository.deleteToken(refreshToken);
   }
 }

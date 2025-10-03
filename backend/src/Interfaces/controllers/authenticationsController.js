@@ -16,7 +16,9 @@ class AuthenticationsController {
   async postAuthenticationHandler(req, res) {
     const loginUserUseCase = this._container.getInstance(LoginUserUseCase.name);
     const loggedInUser = await loginUserUseCase.execute(req.body);
-    res.cookie('accessToken', loggedInUser.accessToken, { httpOnly: true, secure: false, sameSite: 'Lax' });
+    res.cookie('accessToken', loggedInUser.accessToken, {
+      httpOnly: true, secure: false, sameSite: 'Lax', maxAge: 3600000,
+    });
     return res.status(201).json({ status: 'success', data: loggedInUser });
   }
 
@@ -35,7 +37,7 @@ class AuthenticationsController {
   async deleteAuthenticationHandler(req, res) {
     const useCasePayload = req.cookies.accessToken;
     const logoutUserUserCase = this._container.getInstance(LogoutUserUseCase.name);
-    await logoutUserUserCase.execute({ refreshToken: useCasePayload });
+    await logoutUserUserCase.execute({ accessToken: useCasePayload });
     res.clearCookie('accessToken', { httpOnly: true, secure: false, sameSite: 'Lax' });
     return res.status(200).json({ status: 'success' });
   }

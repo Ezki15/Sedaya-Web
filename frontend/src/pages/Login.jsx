@@ -1,43 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
-export default function Login({ setUser }) {
+export default function Login({ setUser, setIsLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [isSubmit, setIsSubmit] = useState(false);
+  
 
-  const handleLogin = async (e) => {
+  function handleLogin (e) {
     e.preventDefault();
-    try {
-      // 1. Login → simpan cookie token otomatis
-      await api.post(
-        "/authentications",
-        { email, password },
-        { withCredentials: true }
-      );
-
-      // 2. Ambil data user valid dari backend
-      const res = await api.get("authentications/me", { withCredentials: true });
-      const user = res.data;
-      
-      // 3. Simpan user ke state global (atau context)
-      setUser(user);
-      
-      console.log(user.data.role);
-      // 4. Redirect sesuai role
-      if (user.data.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
-
-      alert("Login berhasil!");
-    } catch (err) {
-      alert("Login gagal");
-      console.error(err);
-    }
+    setIsSubmit(true);
   };
+
+  useEffect(() => {
+    if (isSubmit) {
+      const login = async () => {
+        try {
+          // 1. Login → simpan cookie token otomatis
+          await api.post(
+            "/authentications",
+            { email, password },
+            { withCredentials: true }
+          );
+
+          // 2. Ambil data user valid dari backend
+          const res = await api.get("authentications/me", { withCredentials: true });
+          const userData = res.data;
+          
+          // 3. Simpan user ke state global (atau context)
+          setUser(userData);
+          
+          console.log(userData.data.role);
+          // 4. Redirect sesuai role
+          if (userData.data.role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/");
+          }
+
+          setIsLogin(true);
+
+          alert("Login berhasil!");
+        } catch (err) {
+          alert("Login gagal");
+          console.error(err);
+        } finally {
+          setIsSubmit(false);
+        }
+      };
+      login();
+    }
+  
+  }, [isSubmit, email, password, navigate, setUser, setIsLogin]);
 
   return (
     <div className="flex h-[80vh] justify-center items-center">

@@ -2,14 +2,15 @@ import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-export default function Logout({ setUser }) {
+export default function Logout({ setUser, setIsLogin }) {
   const navigate = useNavigate();
 
   useEffect(() => {
     async function logout() {
       try {
         await api.delete("/authentications", { withCredentials: true });
-        setUser(null); // reset state user di frontend
+        setUser({}); // reset state user di frontend
+        setIsLogin(false)
         alert("Logout berhasil!");
         navigate("/");
       } catch (err) {
@@ -18,10 +19,10 @@ export default function Logout({ setUser }) {
       }
     }
     logout();
-  }, [navigate, setUser]);
+  }, [navigate, setUser, setIsLogin]);
 
   return (
-    <div class  Name="flex h-screen justify-center items-center">
+    <div className="flex h-screen justify-center items-center">
       <h2>Sedang logout...</h2>
     </div>
   );
