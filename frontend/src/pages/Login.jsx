@@ -1,59 +1,36 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
-export default function Login({ setUser, setIsLogin }) {
+export default function Login({ setIsLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [isSubmit, setIsSubmit] = useState(false);
   
 
-  function handleLogin (e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    setIsSubmit(true);
-  };
+    try {
+      // 1. Login → cookie token otomatis tersimpan
+      await api.post(
+        "/authentications",
+        { email, password },
+        { withCredentials: true }
+      );
 
-  useEffect(() => {
-    if (isSubmit) {
-      const login = async () => {
-        try {
-          // 1. Login → simpan cookie token otomatis
-          await api.post(
-            "/authentications",
-            { email, password },
-            { withCredentials: true }
-          );
+      // 2. Update state global → biar App.jsx nanti otomatis fetch /me
+      setIsLogin(true);
 
-          // 2. Ambil data user valid dari backend
-          const res = await api.get("authentications/me", { withCredentials: true });
-          const userData = res.data;
-          
-          // 3. Simpan user ke state global (atau context)
-          setUser(userData);
-          
-          console.log(userData.data.role);
-          // 4. Redirect sesuai role
-          if (userData.data.role === "admin") {
-            navigate("/admin");
-          } else {
-            navigate("/");
-          }
+      // 3. Redirect sementara (App.jsx akan override sesuai role)
+      navigate("/");
 
-          setIsLogin(true);
-
-          alert("Login berhasil!");
-        } catch (err) {
-          alert("Login gagal");
-          console.error(err);
-        } finally {
-          setIsSubmit(false);
-        }
-      };
-      login();
+      alert("Login berhasil!");
+    } catch (err) {
+      alert("Login gagal");
+      console.error(err);
     }
-  
-  }, [isSubmit, email, password, navigate, setUser, setIsLogin]);
+  }
+
 
   return (
     <div className="flex h-[80vh] justify-center items-center">

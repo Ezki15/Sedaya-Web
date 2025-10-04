@@ -1,16 +1,20 @@
 import { Navigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../hooks/contexts/AuthContexts";
 
-export default function ProtectedRoute({ user, role, children }) {
-  if (!user) {
-    // ❌ kalau belum login → lempar ke /login
+export default function ProtectedRoute({ children, allowedRoles }) {
+  const { isLogin, user } = useContext(AuthContext);
+
+  if (!isLogin) {
+    // belum login → redirect ke login
     return <Navigate to="/login" replace />;
   }
 
-  if (role && user.role !== role) {
-    // ❌ kalau role tidak sesuai → lempar ke home
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    // role tidak cocok → redirect ke home
     return <Navigate to="/" replace />;
   }
 
-  // ✅ kalau lolos validasi → render child route
   return children;
 }
+
