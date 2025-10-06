@@ -11,7 +11,7 @@ import { AuthContext } from "./hooks/contexts/AuthContexts";
 import api from "./api/axios";
 
 function App() {
-  const [user, setUser] = useState(null);  // null = belum diketahui
+  const [user, setUser] = useState(null); // null = belum diketahui
   const [isLogin, setIsLogin] = useState(false);
   const [loading, setLoading] = useState(true); // untuk cegah flicker
 
@@ -19,7 +19,9 @@ function App() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await api.get("/authentications/me", { withCredentials: true });
+        const res = await api.get("/authentications/me", {
+          withCredentials: true,
+        });
         setUser(res.data.data); // { id, name, role }
         setIsLogin(true);
       } catch (err) {
@@ -39,44 +41,71 @@ function App() {
   }, [isLogin]);
 
   if (loading) {
-    return <div className="flex h-screen justify-center items-center">Loading...</div>;
+    return (
+      <div className="flex h-screen justify-center items-center">
+        Loading...
+      </div>
+    );
   }
 
   return (
     <Router>
       <AuthContext.Provider value={{ user, isLogin, setUser, setIsLogin }}>
-        <Navbar />
+        {!(isLogin && user?.role === "admin") && <Navbar />}
         <Routes>
           {/* Route publik */}
-          <Route path="/register" element={!isLogin ? <Register /> : <Navigate to="/" />} />
-          <Route path="/login" element={!isLogin ? <Login setIsLogin={setIsLogin} /> : <Navigate to="/" />} />
+          <Route
+            path="/register"
+            element={!isLogin ? <Register /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/login"
+            element={
+              !isLogin ? <Login setIsLogin={setIsLogin} /> : <Navigate to="/" />
+            }
+          />
 
           {/* Route private (user login) */}
           <Route
             path="/"
             element={
-              isLogin && user?.role === "admin" 
-                ? <Navigate to="/admin" />
-                : <Home />
+              isLogin && user?.role === "admin" ? (
+                <Navigate to="/admin" />
+              ) : (
+                <Home />
+              )
             }
           />
-
 
           {/* Route khusus admin */}
           <Route
             path="/admin"
             element={
-              isLogin && user?.role === "admin"
-                ? <AdminPanel />
-                : <Navigate to="/login" />
+              isLogin && user?.role === "admin" ? (
+                <AdminPanel />
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
 
           {/* Logout */}
-          <Route path="/logout" element={<Logout setUser={setUser} setIsLogin={setIsLogin} />} />
+          <Route
+            path="/logout"
+            element={<Logout setUser={setUser} setIsLogin={setIsLogin} />}
+          />
 
           {/* Catch-all redirect */}
-          <Route path="*" element={isLogin ? <Navigate to={user?.role === "admin" ? "/admin" : "/"} /> : <Navigate to="/" />} />
+          <Route
+            path="*"
+            element={
+              isLogin ? (
+                <Navigate to={user?.role === "admin" ? "/admin" : "/"} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
         </Routes>
       </AuthContext.Provider>
     </Router>
