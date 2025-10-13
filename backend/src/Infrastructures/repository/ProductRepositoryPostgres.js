@@ -16,7 +16,7 @@ class ProductRepositoryPostgres extends ProductRepository {
     const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO products VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name',
+      text: 'INSERT INTO products VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name, description, price, stock',
       values: [
         id,
         newProduct.name,
@@ -30,10 +30,13 @@ class ProductRepositoryPostgres extends ProductRepository {
     };
 
     const result = await this._pool.query(query);
-    return {
-      id: result.rows[0].id,
-      name: result.rows[0].name,
-    };
+    return result.rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      price: Number(row.price),
+      stock: Number(row.stock),
+    }));
   }
 
   async getProducts() {

@@ -1,12 +1,11 @@
 import { useState } from "react";
-import api from "../api/axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 export default function Login({ setIsLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -30,7 +29,6 @@ export default function Login({ setIsLogin }) {
       console.error(err);
     }
   }
-
 
   return (
     <div className="flex h-[80vh] justify-center items-center">

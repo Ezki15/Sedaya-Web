@@ -6,7 +6,10 @@ class AddProductUseCase {
   }
 
   async execute(useCasePayload) {
-    const newProduct = new NewProduct(useCasePayload);
+    const price = Number(useCasePayload.price);
+    const stock = Number(useCasePayload.stock);
+    const payload = { ...useCasePayload, price, stock };
+    const newProduct = new NewProduct(payload);
     return this._productRepository.addProduct(newProduct);
   }
 }

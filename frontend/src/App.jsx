@@ -2,11 +2,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import Home from "./pages/Home";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import AdminPanel from "./pages/AdminPanel";
+import Register from "./pages/Authentications/Register";
+import Login from "./pages/Authentications/Login";
+import AdminPanel from "./pages/Admin/AdminPanel";
 import Navbar from "./components/Navbar";
-import Logout from "./pages/Logout";
+import Logout from "./pages/Authentications/Logout";
 import { AuthContext } from "./hooks/contexts/AuthContexts";
 import api from "./api/axios";
 
