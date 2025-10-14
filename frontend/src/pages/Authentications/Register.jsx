@@ -1,9 +1,10 @@
 import { useState } from "react";
 import api from "../../api/axios";
+import {useImmer} from "use-immer";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useImmer({
     fullname: "",
     username: "",
     email: "",
@@ -15,7 +16,7 @@ function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(draf => { draf.push({ [name]: value })});
   };
 
   const handleSubmit = async (e) => {

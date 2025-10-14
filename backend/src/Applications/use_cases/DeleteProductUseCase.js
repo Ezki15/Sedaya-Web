@@ -4,8 +4,11 @@ class DeleteProductUseCase {
   }
 
   async execute(productId) {
+    console.log(productId);
     await this._productRepository.validateAvailableProduct(productId);
+    console.log('validated');
     await this._productRepository.deleteProductById(productId);
+    console.log('deleted');
   }
 }
 

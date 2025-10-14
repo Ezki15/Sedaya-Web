@@ -1,32 +1,54 @@
 import { useEffect, useState } from "react";
+import { useImmer } from "use-immer";
 import Sidebar from "../../components/Admin/Sidebar";
 import ProductTable from "../../components/Admin/ProductTable";
-import AddProductModal from "../../components/Admin/AddProductModal";
+import ProductFormModal from "../../components/Admin/ProductFormModal";
 import api from "../../api/axios";
 
 export default function AdminPanel() {
   const [activePage, setActivePage] = useState("dashboard");
   const [showModal, setShowModal] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useImmer([]);
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const handleAddProduct = (newProduct) => {
     setTimeout(() => {
-      setProducts((prev) => [...prev, newProduct]);
+      setProducts((draft) => {
+        draft.push(newProduct);
+      });
     }, 2000);
   };
 
+  const handleUpdateProduct = (updateProduct) => {
+    setProducts((draft) => {
+      const index = draft.findIndex((item) => item.id === updateProduct.id);
+      draft[index] = updateProduct;
+    });
+  };
+
+  const handleDeleteProduct = async (product) => {
+    if (confirm("Yakin ingin menghapus produk ini?")) {
+      await api.delete(`/products/${product.id}`, { withCredentials: true });
+      setProducts((draft) => {
+        const index = draft.findIndex((item) => item.id === product.id);
+        draft.splice(index, 1);
+      });
+    }
+  };
+
   useEffect(() => {
-    async function AddProduct(){
-      try{
-        const res = await api.get("/products", {withCredentials: true});
+    async function AddProduct() {
+      try {
+        const res = await api.get("/products", { withCredentials: true });
         setProducts(res.data.data);
-      } catch(err){
+      } catch (err) {
         console.log(err);
       }
     }
 
     AddProduct();
-  }, [products])
+  }, [products, setProducts]);
 
   const renderContent = () => {
     switch (activePage) {
@@ -35,7 +57,8 @@ export default function AdminPanel() {
           <div>
             <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
             <p className="text-gray-600">
-              Selamat datang di dashboard admin. Pilih menu di sidebar untuk mulai mengelola data.
+              Selamat datang di dashboard admin. Pilih menu di sidebar untuk
+              mulai mengelola data.
             </p>
           </div>
         );
@@ -44,12 +67,25 @@ export default function AdminPanel() {
           <>
             <ProductTable
               products={products}
-              onAdd={() => setShowModal(true)}
+              onAddProduct={() => {
+                setShowModal(true);
+                setIsEdit(false);
+                setEditingProduct(null);
+              }}
+              onUpdateProduct={(product) => {
+                setShowModal(true);
+                setIsEdit(true);
+                setEditingProduct(product);
+              }}
+              onDeleteProduct={handleDeleteProduct}
             />
             {showModal && (
-              <AddProductModal
+              <ProductFormModal
                 onClose={() => setShowModal(false)}
-                onSuccess={handleAddProduct}
+                onSuccessAdd={handleAddProduct}
+                onSuccessUpdate={handleUpdateProduct}
+                editingProduct={editingProduct}
+                isEdit={isEdit}
               />
             )}
           </>

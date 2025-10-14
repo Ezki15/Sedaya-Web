@@ -1,10 +1,10 @@
-export default function ProductTable({ products, onAdd }) {
+export default function ProductTable({ products, onAddProduct, onUpdateProduct, onDeleteProduct }) {
   return (
     <div className="flex-1 p-8">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Daftar Produk</h2>
         <button
-          onClick={onAdd}
+          onClick={onAddProduct}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
           + Tambah Produk
@@ -35,9 +35,22 @@ export default function ProductTable({ products, onAdd }) {
                 <td className="border border-gray-300 p-2">{p.id}</td>
                 <td className="border border-gray-300 p-2">{p.name}</td>
                 <td className="border border-gray-300 p-2">{p.description}</td>
-                <td className="border border-gray-300 p-2">{p.price}</td>
+                <td className="border border-gray-300 p-2">Rp. {p.price}</td>
                 <td className="border border-gray-300 p-2">{p.stock}</td>
-                <td className="border border-gray-300 p-2">Edit | Delete</td>
+                <td className="py-2 px-3 border border-gray-300 text-center">
+                  <button
+                    onClick={() => onUpdateProduct(p)}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded-md mr-2 hover:bg-yellow-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => onDeleteProduct(p)}
+                    className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))
           )}

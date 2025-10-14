@@ -120,7 +120,6 @@ class ProductRepositoryPostgres extends ProductRepository {
       text: 'UPDATE products SET is_deleted = $1 WHERE id = $2',
       values: [isDeleted, productId],
     };
-
     await this._pool.query(query);
   }
 }
