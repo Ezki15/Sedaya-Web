@@ -54,6 +54,4 @@ export const up = (pgm) => {
  */
 export const down = (pgm) => {
   pgm.dropTable('order_items');
-  pgm.dropConstraint('order_items', 'fk_order_items.order_id_to_orders.id');
-  pgm.dropConstraint('order_items', 'fk_order_items.product_id_to_products.id');
 };

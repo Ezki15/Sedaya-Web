@@ -48,15 +48,18 @@ describe('a new product entities', () => {
       stock: 20,
     };
 
+    const imagePathUpload = 'uploads/products/image.jpg';
+
     // Action
     const {
-      name, description, price, stock,
-    } = new NewProduct(payload);
+      name, description, price, stock, imagePath,
+    } = new NewProduct(payload, imagePathUpload);
 
     // Assert
     expect(name).toEqual(payload.name);
     expect(description).toEqual(payload.description);
     expect(price).toEqual(payload.price);
     expect(stock).toEqual(payload.stock);
+    expect(imagePath).toEqual(imagePathUpload);
   });
 });

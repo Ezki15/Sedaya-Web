@@ -1,4 +1,6 @@
 import request from 'supertest';
+import path from 'path';
+import fs from 'fs';
 import pool from '../../database/postgres/pool.js';
 import ProductsTableTestHelper from '../../../../test/ProductsTableTestHelper.js';
 import UserTableTestHelper from '../../../../test/UsersTableTestHelper.js';
@@ -8,6 +10,10 @@ import container from '../../container.js';
 describe(' /products endpoint', () => {
   afterAll(async () => {
     await pool.end();
+    const uploadDir = path.resolve('uploads/products');
+    fs.readdirSync(uploadDir).forEach((file) => {
+      fs.unlinkSync(path.join(uploadDir, file));
+    });
   });
 
   afterEach(async () => {
@@ -31,8 +37,21 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .post('/products')
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`) // assuming a valid token is used
-        .send(requestPayload);
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            role: 'admin',
+          })}`,
+        ) // assuming a valid token is used
+        .field('name', requestPayload.name)
+        .field('description', requestPayload.description)
+        .field('price', requestPayload.price)
+        .field('stock', requestPayload.stock)
+        .attach(
+          'image',
+          Buffer.from('fake image content'),
+          'product-image.jpg',
+        ); // attaching a fake image file
 
       // Assert
       const responseJson = response.body;
@@ -42,9 +61,9 @@ describe(' /products endpoint', () => {
       expect(responseJson.data).toBeDefined();
     });
 
-    it('should response 403 when user not admin', async () => {
+    it('should response 201 and persisted product but without file image', async () => {
       // Arrange
-      await UserTableTestHelper.addUser({ id: 'user-234', email: 'userNonAdmin@gmail.com', role: 'user' }); // Ensure a non-admin user exists
+      await UserTableTestHelper.addUser({ role: 'admin' }); // Ensure an admin user exists
       const requestPayload = {
         name: 'Product A',
         description: 'Description of Product A',
@@ -57,8 +76,104 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .post('/products')
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ id: 'user-234', email: 'userNonAdmin@gmail.com', role: 'user' })}`) // assuming a valid token is used
-        .send(requestPayload);
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            role: 'admin',
+          })}`,
+        ) // assuming a valid token is used
+        .field('name', requestPayload.name)
+        .field('description', requestPayload.description)
+        .field('price', requestPayload.price)
+        .field('stock', requestPayload.stock);
+        // .attach(
+        //   'image',
+        //   Buffer.from('fake image content'),
+        //   'product-image.jpg',
+        // ); // attaching a fake image file
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toBe(201);
+      expect(responseJson.status).toBe('success');
+      expect(responseJson.data).toBeDefined();
+    });
+
+    it('should response error, file image format is not correct', async () => {
+      // Arrange
+      await UserTableTestHelper.addUser({ role: 'admin' }); // Ensure an admin user exists
+      const requestPayload = {
+        name: 'Product A',
+        description: 'Description of Product A',
+        price: 10000,
+        stock: 50,
+      };
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .post('/products')
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            role: 'admin',
+          })}`,
+        ) // assuming a valid token is used
+        .field('name', requestPayload.name)
+        .field('description', requestPayload.description)
+        .field('price', requestPayload.price)
+        .field('stock', requestPayload.stock)
+        .attach(
+          'image',
+          Buffer.from('fake image content'),
+          'product-image.svg',
+        ); // attaching a fake image file
+
+      // Assert
+      const responseJson = response.body;
+
+      expect(response.statusCode).toBe(400);
+      expect(responseJson.status).toBe('fail');
+    });
+
+    it('should response 403 when user not admin', async () => {
+      // Arrange
+      await UserTableTestHelper.addUser({
+        id: 'user-234',
+        email: 'userNonAdmin@gmail.com',
+        role: 'user',
+      }); // Ensure a non-admin user exists
+      const requestPayload = {
+        name: 'Product A',
+        description: 'Description of Product A',
+        price: 10000,
+        stock: 50,
+      };
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await request(server)
+        .post('/products')
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            id: 'user-234',
+            email: 'userNonAdmin@gmail.com',
+            role: 'user',
+          })}`,
+        ) // assuming a valid token is used
+        .field('name', requestPayload.name)
+        .field('description', requestPayload.description)
+        .field('price', requestPayload.price)
+        .field('stock', requestPayload.stock)
+        .attach(
+          'image',
+          Buffer.from('fake image content'),
+          'product-image.jpg',
+        );
 
       // Assert
       const responseJson = response.body;
@@ -81,7 +196,11 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .post('/products')
-        .send(requestPayload);
+        .field('name', requestPayload.name)
+        .field('description', requestPayload.description)
+        .field('price', requestPayload.price)
+        .field('stock', requestPayload.stock)
+        .attach('image', Buffer.from('fake image content'), 'product-image.jpg');
 
       // Assert
       const responseJson = response.body;
@@ -105,8 +224,16 @@ describe(' /products endpoint', () => {
     // Action
     const response = await request(server)
       .post('/products')
-      .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
-      .send(requestPayload);
+      .set(
+        'Cookie',
+        `accessToken=${await ProductsTableTestHelper.generateMockToken({
+          role: 'admin',
+        })}`,
+      )
+      .field('name', requestPayload.name)
+      .field('price', requestPayload.price)
+      .field('stock', requestPayload.stock)
+      .attach('image', Buffer.from('fake image content'), 'product-image.jpg');
 
     // Assert
     const responseJson = response.body;
@@ -128,8 +255,17 @@ describe(' /products endpoint', () => {
     // Action
     const response = await request(server)
       .post('/products')
-      .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
-      .send(requestPayload);
+      .set(
+        'Cookie',
+        `accessToken=${await ProductsTableTestHelper.generateMockToken({
+          role: 'admin',
+        })}`,
+      )
+      .field('name', requestPayload.name)
+      .field('description', requestPayload.description)
+      .field('price', requestPayload.price)
+      .field('stock', requestPayload.stock)
+      .attach('image', Buffer.from('fake image content'), 'product-image.jpg');
 
     // Assert
     const responseJson = response.body;
@@ -151,8 +287,17 @@ describe(' /products endpoint', () => {
     // Action
     const response = await request(server)
       .post('/products')
-      .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
-      .send(requestPayload);
+      .set(
+        'Cookie',
+        `accessToken=${await ProductsTableTestHelper.generateMockToken({
+          role: 'admin',
+        })}`,
+      )
+      .field('name', requestPayload.name)
+      .field('description', requestPayload.description)
+      .field('price', requestPayload.price)
+      .field('stock', requestPayload.stock)
+      .attach('image', Buffer.from('fake image content'), 'product-image.jpg');
 
     // Assert
     const responseJson = response.body;
@@ -177,7 +322,12 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .put(`/products/${productId}`)
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            role: 'admin',
+          })}`,
+        )
         .send(requestPayload);
       // Assert
       const responseJson = response.body;
@@ -199,7 +349,12 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .put(`/products/${productId}`)
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`)
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            role: 'admin',
+          })}`,
+        )
         .send(requestPayload);
       // Assert
       const responseJson = response.body;
@@ -217,12 +372,22 @@ describe(' /products endpoint', () => {
         price: 15000,
         stock: 25,
       };
-      await UserTableTestHelper.addUser({ id: 'user-234', email: 'userNonAdmin@gmail.com', role: 'user' }); // Ensure a non-admin user exists
+      await UserTableTestHelper.addUser({
+        id: 'user-234',
+        email: 'userNonAdmin@gmail.com',
+        role: 'user',
+      }); // Ensure a non-admin user exists
       const server = await createServer(container);
       // Action
       const response = await request(server)
         .put(`/products/${productId}`)
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ id: 'user-234', email: 'userNonAdmin@gmail.com' })}`)
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            id: 'user-234',
+            email: 'userNonAdmin@gmail.com',
+          })}`,
+        )
         .send(requestPayload);
       // Assert
       const responseJson = response.body;
@@ -241,7 +406,10 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .get('/products')
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`);
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`,
+        );
 
       // Assert
       const responseJson = response.body;
@@ -261,7 +429,10 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .get(`/products/${productId}`)
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`);
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`,
+        );
 
       // Assert
       const responseJson = response.body;
@@ -278,7 +449,10 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .get('/products/non-existing-id')
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`);
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({})}`,
+        );
 
       // Assert
       const responseJson = response.body;
@@ -299,7 +473,12 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .delete(`/products/${productId}`)
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`);
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            role: 'admin',
+          })}`,
+        );
 
       // Assert
       const responseJson = response.body;
@@ -317,7 +496,12 @@ describe(' /products endpoint', () => {
       // Action
       const response = await request(server)
         .delete(`/products/${productId}`)
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ role: 'admin' })}`);
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            role: 'admin',
+          })}`,
+        );
 
       // Assert
       const responseJson = response.body;
@@ -330,13 +514,23 @@ describe(' /products endpoint', () => {
       // Arrange
       const productId = 'product-123'; // Mock product ID, replace with actual ID
       await ProductsTableTestHelper.addProduct({ id: productId });
-      await UserTableTestHelper.addUser({ id: 'user-234', email: 'userNonAdmin@gmail.com', role: 'user' }); // Ensure a non-admin user exists
+      await UserTableTestHelper.addUser({
+        id: 'user-234',
+        email: 'userNonAdmin@gmail.com',
+        role: 'user',
+      }); // Ensure a non-admin user exists
       const server = await createServer(container);
 
       // Action
       const response = await request(server)
         .delete(`/products/${productId}`)
-        .set('Cookie', `accessToken=${await ProductsTableTestHelper.generateMockToken({ id: 'user-234', email: 'userNonAdmin@gmail.com' })}`);
+        .set(
+          'Cookie',
+          `accessToken=${await ProductsTableTestHelper.generateMockToken({
+            id: 'user-234',
+            email: 'userNonAdmin@gmail.com',
+          })}`,
+        );
 
       // Assert
       const responseJson = response.body;

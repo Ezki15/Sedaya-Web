@@ -17,42 +17,66 @@ describe('ProductRepositoryPostgres', () => {
 
   describe('addProduct function', () => {
     it('should persist new product', async () => {
-      const newProduct = new NewProduct({
-        name: 'Test Product',
-        description: 'Test Description',
-        price: 100000,
-        stock: 50,
-      });
+      // Arrange
+      const imagePath = 'upload/images/product-123.jpg';
+      const newProduct = new NewProduct(
+        {
+          name: 'Test Product',
+          description: 'Test Description',
+          price: 100000,
+          stock: 50,
+        },
+        imagePath,
+      );
+
       const fakeIdGenerator = () => '123';
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
 
       // Action
       await productRepository.addProduct(newProduct);
 
       // Assert
-      const product = await ProductsTableTestHelper.findProductById('product-123');
+      const product = await ProductsTableTestHelper.findProductById(
+        'product-123',
+      );
       expect(product).toHaveLength(1);
     });
 
     it('should return the added product correctly', async () => {
       // Arrange
-      const newProduct = new NewProduct({
-        name: 'Test Product',
-        description: 'Test Description',
-        price: 100000,
-        stock: 50,
-      });
+      const imagePath = 'upload/images/product-123.jpg';
+      const newProduct = new NewProduct(
+        {
+          name: 'Test Product',
+          description: 'Test Description',
+          price: 100000,
+          stock: 50,
+        },
+        imagePath,
+      );
       const fakeIdGenerator = () => '123';
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
 
       // Action
       const addedProduct = await productRepository.addProduct(newProduct);
 
       // Assert
-      expect(addedProduct).toStrictEqual({
-        id: 'product-123',
-        name: newProduct.name,
-      });
+      expect(addedProduct).toStrictEqual([
+        {
+          id: 'product-123',
+          name: newProduct.name,
+          description: newProduct.description,
+          price: newProduct.price,
+          stock: newProduct.stock,
+
+        },
+      ]);
     });
   });
 
@@ -72,7 +96,10 @@ describe('ProductRepositoryPostgres', () => {
         stock: 30,
       });
       const fakeIdGenerator = () => crypto.randomBytes(10).toString('hex');
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
 
       await productRepository.addProduct(newProduct1);
       await productRepository.addProduct(newProduct2);
@@ -99,21 +126,31 @@ describe('ProductRepositoryPostgres', () => {
         stock: 50,
       });
       const fakeIdGenerator = () => '123';
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
 
       await productRepository.addProduct(newProduct);
 
       // Action & Assert
-      await expect(productRepository.validateAvailableProduct('product-123')).resolves.not.toThrow();
+      await expect(
+        productRepository.validateAvailableProduct('product-123'),
+      ).resolves.not.toThrow();
     });
 
     it('should throw NotFoundError if product is not available', async () => {
       // Arrange
       const fakeIdGenerator = () => '123';
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
 
       // Action & Assert
-      await expect(productRepository.validateAvailableProduct('product-999')).rejects.toThrow(NotFoundError);
+      await expect(
+        productRepository.validateAvailableProduct('product-999'),
+      ).rejects.toThrow(NotFoundError);
     });
   });
 
@@ -129,7 +166,10 @@ describe('ProductRepositoryPostgres', () => {
       });
       const productId = 'product-123';
       const fakeIdGenerator = () => '123';
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
 
       // Action
       const product = await productRepository.getProductById(productId);
@@ -155,11 +195,16 @@ describe('ProductRepositoryPostgres', () => {
         isDeleted: true,
       });
       const fakeIdGenerator = () => '123';
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
       const productId = 'product-123';
 
       // Action & Assert
-      await expect(productRepository.getProductById(productId)).rejects.toThrow(NotFoundError);
+      await expect(productRepository.getProductById(productId)).rejects.toThrow(
+        NotFoundError,
+      );
     });
   });
 
@@ -174,7 +219,10 @@ describe('ProductRepositoryPostgres', () => {
       });
       const fakeIdGenerator = () => '123';
       const productId = 'product-123';
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
 
       await productRepository.addProduct(newProduct);
 
@@ -189,7 +237,9 @@ describe('ProductRepositoryPostgres', () => {
       await productRepository.updateProduct(productId, updatedProduct);
 
       // Assert
-      const product = await ProductsTableTestHelper.findProductById('product-123');
+      const product = await ProductsTableTestHelper.findProductById(
+        'product-123',
+      );
       expect(product).toHaveLength(1);
       expect(product[0].name).toBe(updatedProduct.name);
       expect(product[0].description).toBe(updatedProduct.description);
@@ -203,13 +253,18 @@ describe('ProductRepositoryPostgres', () => {
       // Arrange
       await ProductsTableTestHelper.addProduct({});
       const fakeIdGenerator = () => '123';
-      const productRepository = new ProductRepositoryPostgres(pool, fakeIdGenerator);
+      const productRepository = new ProductRepositoryPostgres(
+        pool,
+        fakeIdGenerator,
+      );
 
       // Action
       await productRepository.deleteProductById('product-123');
 
       // Assert
-      const product = await ProductsTableTestHelper.findProductById('product-123');
+      const product = await ProductsTableTestHelper.findProductById(
+        'product-123',
+      );
       expect(product).toHaveLength(0);
     });
   });

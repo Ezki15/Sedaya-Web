@@ -13,6 +13,7 @@ export default function ProductFormModal({
     description: "",
     price: "",
     stock: "",
+    image: null, // tambahkan field untuk file
   });
 
   const [loading, setLoading] = useState(false);
@@ -25,12 +26,18 @@ export default function ProductFormModal({
         description: editingProduct.description || "",
         price: editingProduct.price || "",
         stock: editingProduct.stock || "",
+        image: null,
       });
     }
   }, [isEdit, editingProduct]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    if (name === "image") {
+      setForm({ ...form, image: files[0] });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -39,24 +46,34 @@ export default function ProductFormModal({
     setMessage({ type: "", text: "" });
 
     try {
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("description", form.description);
+      formData.append("price", form.price);
+      formData.append("stock", form.stock);
+      if (form.image) {
+        formData.append("image", form.image);
+      }
+
+      let res;
       if (isEdit && editingProduct) {
-        const res = await api.put(`/products/${editingProduct.id}`, form, {
+        res = await api.put(`/products/${editingProduct.id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         });
-        const updatedProduct = res.data.data;
-        onSuccessUpdate(updatedProduct);
+        onSuccessUpdate(res.data.data);
         setMessage({ type: "success", text: "Produk berhasil diperbarui!" });
       } else {
-        const res = await api.post("/products", form, { withCredentials: true });
-        const newProduct = res.data.data;
-        onSuccessAdd(newProduct);
+        res = await api.post("/products", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        });
+        console.log(res.data.data);
+        onSuccessAdd(res.data.data);
         setMessage({ type: "success", text: "Produk berhasil ditambahkan!" });
       }
 
-      // Tutup modal otomatis setelah 1 detik sukses
-      setTimeout(() => {
-        onClose();
-      }, 1000);
+      setTimeout(() => onClose(), 1000);
     } catch (err) {
       console.error(err);
       setMessage({
@@ -75,7 +92,6 @@ export default function ProductFormModal({
           {isEdit ? "Edit Produk" : "Tambah Produk"}
         </h2>
 
-        {/* Notifikasi */}
         {message.text && (
           <div
             className={`p-3 mb-3 rounded-md text-sm ${
@@ -88,7 +104,7 @@ export default function ProductFormModal({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-3" encType="multipart/form-data">
           <input
             type="text"
             name="name"
@@ -124,6 +140,15 @@ export default function ProductFormModal({
             onChange={handleChange}
             className="border w-full p-2 rounded"
             required
+          />
+
+          {/* Input file baru */}
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={handleChange}
+            className="border w-full p-2 rounded"
           />
 
           <div className="flex justify-end space-x-3">

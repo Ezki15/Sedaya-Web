@@ -13,12 +13,11 @@ export default function AdminPanel() {
   const [editingProduct, setEditingProduct] = useState(null);
 
   const handleAddProduct = (newProduct) => {
-    setTimeout(() => {
-      setProducts((draft) => {
-        draft.push(newProduct);
-      });
-    }, 2000);
-  };
+  setProducts((draft) => {
+    draft.push(newProduct);
+  });
+};
+
 
   const handleUpdateProduct = (updateProduct) => {
     setProducts((draft) => {
@@ -41,14 +40,15 @@ export default function AdminPanel() {
     async function AddProduct() {
       try {
         const res = await api.get("/products", { withCredentials: true });
-        setProducts(res.data.data);
+        const sorted = res.data.data.sort((a, b) => a.createAt - b.createAt);
+        setProducts(sorted);
       } catch (err) {
         console.log(err);
       }
     }
 
     AddProduct();
-  }, [products, setProducts]);
+  }, [setProducts]);
 
   const renderContent = () => {
     switch (activePage) {

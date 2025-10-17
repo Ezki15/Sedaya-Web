@@ -16,7 +16,7 @@ class ProductRepositoryPostgres extends ProductRepository {
     const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO products VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name, description, price, stock',
+      text: 'INSERT INTO products VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, name, description, price, stock',
       values: [
         id,
         newProduct.name,
@@ -26,6 +26,7 @@ class ProductRepositoryPostgres extends ProductRepository {
         isDeleted,
         createdAt,
         updatedAt,
+        newProduct.imagePath,
       ],
     };
 
@@ -42,7 +43,7 @@ class ProductRepositoryPostgres extends ProductRepository {
   async getProducts() {
     const isDeleted = false; // Only fetch products that are not deleted
     const query = {
-      text: 'SELECT id, name, description, price, stock FROM products WHERE is_deleted = $1',
+      text: 'SELECT id, name, description, price, stock, created_at FROM products WHERE is_deleted = $1',
       values: [isDeleted],
     };
 
@@ -54,6 +55,7 @@ class ProductRepositoryPostgres extends ProductRepository {
       description: row.description,
       price: Number(row.price),
       stock: Number(row.stock),
+      createdAt: row.created_at,
     }));
   }
 

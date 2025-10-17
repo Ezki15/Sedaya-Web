@@ -1,5 +1,5 @@
 class UpdatedProduct {
-  constructor(payload) {
+  constructor(payload, imagePath) {
     this._verifyPayload(payload);
 
     const {
@@ -10,6 +10,7 @@ class UpdatedProduct {
     this.description = description;
     this.price = Number(price);
     this.stock = Number(stock);
+    this.imagePath = imagePath;
   }
 
   _verifyPayload({

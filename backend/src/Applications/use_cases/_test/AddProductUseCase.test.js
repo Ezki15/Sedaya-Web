@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import AddProductUseCase from '../AddProductUseCase.js';
 import NewProduct from '../../../Domains/products/entities/NewProduct.js';
 import ProductRepository from '../../../Domains/products/ProductRepository.js';
@@ -16,6 +17,8 @@ describe('AddProductUseCase', () => {
       name: useCasePayload.name,
     };
 
+    const imagePath = 'uploads/images/products/xxxx.jpg';
+
     const mockProductRepository = new ProductRepository();
     mockProductRepository.addProduct = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedAddedProduct));
@@ -25,11 +28,11 @@ describe('AddProductUseCase', () => {
     });
 
     // Action
-    const addedProduct = await addProductUseCase.execute(useCasePayload);
+    const addedProduct = await addProductUseCase.execute(useCasePayload, imagePath);
 
     // Assert
     expect(addedProduct).toStrictEqual(expectedAddedProduct);
-    expect(mockProductRepository.addProduct).toHaveBeenCalledWith(new NewProduct(useCasePayload));
+    expect(mockProductRepository.addProduct).toHaveBeenCalledWith(new NewProduct(useCasePayload, imagePath));
     expect(mockProductRepository.addProduct).toHaveBeenCalledTimes(1);
   });
 });

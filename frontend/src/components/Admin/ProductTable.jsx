@@ -36,7 +36,7 @@ export default function ProductTable({ products, onAddProduct, onUpdateProduct, 
                 <td className="border border-gray-300 p-2">{p.name}</td>
                 <td className="border border-gray-300 p-2">{p.description}</td>
                 <td className="border border-gray-300 p-2">Rp. {p.price}</td>
-                <td className="border border-gray-300 p-2">{p.stock}</td>
+                <td className="border border-gray-300 p-2 text-center">{p.stock}</td>
                 <td className="py-2 px-3 border border-gray-300 text-center">
                   <button
                     onClick={() => onUpdateProduct(p)}

@@ -38,6 +38,9 @@ export const up = (pgm) => {
       notNull: true,
       default: pgm.func('current_timestamp'),
     },
+    image_path: {
+      type: 'TEXT',
+    },
   });
 };
 

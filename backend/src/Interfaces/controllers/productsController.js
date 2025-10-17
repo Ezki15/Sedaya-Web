@@ -16,8 +16,10 @@ class ProductsController {
   }
 
   async postAddProduct(req, res) {
+    const useCasePayload = req.body;
+    const imagePath = req.file ? `/uploads/products/${req.file.filename}` : null;
     const addProductUseCase = this._container.getInstance(AddProductUseCase.name);
-    const addedProduct = await addProductUseCase.execute(req.body);
+    const addedProduct = await addProductUseCase.execute(useCasePayload, imagePath);
     return res.status(201).json({ status: 'success', data: addedProduct });
   }
 
