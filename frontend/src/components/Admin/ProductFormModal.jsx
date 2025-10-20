@@ -51,8 +51,12 @@ export default function ProductFormModal({
       formData.append("description", form.description);
       formData.append("price", form.price);
       formData.append("stock", form.stock);
+      // jika user upload gambar baru → kirim file baru
       if (form.image) {
         formData.append("image", form.image);
+      } else {
+        // jika tidak upload baru → kirim nama file lama
+        formData.append("oldImage", editingProduct.image);
       }
 
       let res;
@@ -68,7 +72,7 @@ export default function ProductFormModal({
           headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         });
-        console.log(res.data.data);
+        // console.log(res.data.data);
         onSuccessAdd(res.data.data);
         setMessage({ type: "success", text: "Produk berhasil ditambahkan!" });
       }
@@ -78,7 +82,9 @@ export default function ProductFormModal({
       console.error(err);
       setMessage({
         type: "error",
-        text: isEdit ? "Gagal memperbarui produk." : "Gagal menambahkan produk.",
+        text: isEdit
+          ? "Gagal memperbarui produk."
+          : "Gagal menambahkan produk.",
       });
     } finally {
       setLoading(false);
@@ -86,7 +92,7 @@ export default function ProductFormModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-white-90 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] relative">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">
           {isEdit ? "Edit Produk" : "Tambah Produk"}
@@ -104,7 +110,11 @@ export default function ProductFormModal({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3" encType="multipart/form-data">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-3"
+          encType="multipart/form-data"
+        >
           <input
             type="text"
             name="name"

@@ -11,6 +11,7 @@ describe('GetProductsUseCase', () => {
       description: 'Description of Product 1',
       price: 100,
       stock: 50,
+      imagePath: 'uploads/products/image-1.jpg',
     };
 
     const productId = 'product-1';

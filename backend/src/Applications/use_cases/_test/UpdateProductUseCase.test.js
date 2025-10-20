@@ -11,6 +11,7 @@ describe('UpdateProductUseCase', () => {
       description: 'Description of Product A',
       price: 100000,
       stock: 50,
+      imagePath: 'image-123.jpg',
     };
     const productId = 'product-123';
 
@@ -21,8 +22,10 @@ describe('UpdateProductUseCase', () => {
       stock: 50,
     };
 
+    const imagePath = 'uploads/images/products/xxxx.jpg';
+
     const expectedUpdatedProduct = {
-      ...updatePayload,
+      ...updatePayload, imagePath: 'image-123.jpg',
     };
 
     const mockProductRepository = new ProductRepository();
@@ -35,11 +38,11 @@ describe('UpdateProductUseCase', () => {
     });
 
     // Action
-    const updatedProduct = await updateProductUseCase.execute(productId, updatePayload);
+    const updatedProduct = await updateProductUseCase.execute(productId, updatePayload, imagePath);
 
     // Assert
     expect(updatedProduct).toStrictEqual(expectedUpdatedProduct);
-    expect(mockProductRepository.updateProduct).toHaveBeenCalledWith(productId, new UpdatedProduct(updatePayload));
+    expect(mockProductRepository.updateProduct).toHaveBeenCalledWith(productId, new UpdatedProduct(updatePayload, imagePath), oldPayload.imagePath);
     expect(mockProductRepository.updateProduct).toHaveBeenCalledTimes(1);
   });
 });

@@ -319,6 +319,7 @@ describe(' /products endpoint', () => {
       };
       await UserTableTestHelper.addUser({ role: 'admin' }); // Ensure an admin user exists
       const server = await createServer(container);
+
       // Action
       const response = await request(server)
         .put(`/products/${productId}`)
@@ -328,7 +329,12 @@ describe(' /products endpoint', () => {
             role: 'admin',
           })}`,
         )
-        .send(requestPayload);
+        .field('name', requestPayload.name)
+        .field('description', requestPayload.description)
+        .field('price', requestPayload.price)
+        .field('stock', requestPayload.stock)
+        .attach('image', Buffer.from('fake image content'), 'product-image.jpg');
+
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(200);
@@ -355,7 +361,11 @@ describe(' /products endpoint', () => {
             role: 'admin',
           })}`,
         )
-        .send(requestPayload);
+        .field('name', requestPayload.name)
+        .field('description', requestPayload.description)
+        .field('price', requestPayload.price)
+        .field('stock', requestPayload.stock)
+        .attach('image', Buffer.from('fake image content'), 'product-image.jpg');
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(404);
@@ -388,7 +398,11 @@ describe(' /products endpoint', () => {
             email: 'userNonAdmin@gmail.com',
           })}`,
         )
-        .send(requestPayload);
+        .field('name', requestPayload.name)
+        .field('description', requestPayload.description)
+        .field('price', requestPayload.price)
+        .field('stock', requestPayload.stock)
+        .attach('image', Buffer.from('fake image content'), 'product-image.jpg');
       // Assert
       const responseJson = response.body;
       expect(response.statusCode).toEqual(403);
@@ -466,7 +480,8 @@ describe(' /products endpoint', () => {
     it('should delete product and return 200', async () => {
       // Arrange
       const productId = 'product-123'; // Mock product ID, replace with actual ID
-      await ProductsTableTestHelper.addProduct({ id: productId });
+      const image = 'product-123.jpg';
+      await ProductsTableTestHelper.addProduct({ id: productId, imagePath: image });
       await UserTableTestHelper.addUser({ role: 'admin' }); // Ensure an admin user exists
       const server = await createServer(container);
 

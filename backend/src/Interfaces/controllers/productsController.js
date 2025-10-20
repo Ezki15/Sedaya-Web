@@ -17,36 +17,64 @@ class ProductsController {
 
   async postAddProduct(req, res) {
     const useCasePayload = req.body;
-    const imagePath = req.file ? `/uploads/products/${req.file.filename}` : null;
-    const addProductUseCase = this._container.getInstance(AddProductUseCase.name);
-    const addedProduct = await addProductUseCase.execute(useCasePayload, imagePath);
+    const imagePath = req.file
+      ? `${req.file.filename}`
+      : null;
+
+    const addProductUseCase = this._container.getInstance(
+      AddProductUseCase.name,
+    );
+    const addedProduct = await addProductUseCase.execute(
+      useCasePayload,
+      imagePath,
+    );
     return res.status(201).json({ status: 'success', data: addedProduct });
   }
 
   async getProducts(req, res) {
-    const getProductsUseCase = this._container.getInstance(GetProductsUseCase.name);
+    const getProductsUseCase = this._container.getInstance(
+      GetProductsUseCase.name,
+    );
     const products = await getProductsUseCase.execute();
     return res.status(200).json({ status: 'success', data: products });
   }
 
   async getProductById(req, res) {
     const productId = req.params.id;
-    const getSingleProductsUseCase = this._container.getInstance(GetSingleProductUseCase.name);
+    const getSingleProductsUseCase = this._container.getInstance(
+      GetSingleProductUseCase.name,
+    );
     const product = await getSingleProductsUseCase.execute(productId);
 
     return res.status(200).json({ status: 'success', data: { product } });
   }
 
   async putUpdateProduct(req, res) {
-    const updateProductUseCase = this._container.getInstance(UpdateProductUseCase.name);
-    const updatedProduct = await updateProductUseCase.execute(req.params.id, req.body);
+    const useCasePayload = req.body;
+    const imagePath = req.file
+      ? `${req.file.filename}`
+      : null;
+
+    const updateProductUseCase = this._container.getInstance(
+      UpdateProductUseCase.name,
+    );
+
+    const updatedProduct = await updateProductUseCase.execute(
+      req.params.id,
+      useCasePayload,
+      imagePath,
+    );
     return res.status(200).json({ status: 'success', data: updatedProduct });
   }
 
   async deleteProduct(req, res) {
-    const deleteProductUseCase = this._container.getInstance(DeleteProductUseCase.name);
+    const deleteProductUseCase = this._container.getInstance(
+      DeleteProductUseCase.name,
+    );
     await deleteProductUseCase.execute(req.params.id);
-    return res.status(200).json({ status: 'success', message: 'Product deleted successfully' });
+    return res
+      .status(200)
+      .json({ status: 'success', message: 'Product deleted successfully' });
   }
 }
 

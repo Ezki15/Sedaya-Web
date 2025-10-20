@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import crypto from 'crypto';
 import ProductsTableTestHelper from '../../../../test/ProductsTableTestHelper.js';
 import pool from '../../database/postgres/pool.js';
@@ -67,7 +68,7 @@ describe('ProductRepositoryPostgres', () => {
       const addedProduct = await productRepository.addProduct(newProduct);
 
       // Assert
-      expect(addedProduct).toStrictEqual([
+      expect(addedProduct).toStrictEqual(
         {
           id: 'product-123',
           name: newProduct.name,
@@ -76,25 +77,28 @@ describe('ProductRepositoryPostgres', () => {
           stock: newProduct.stock,
 
         },
-      ]);
+      );
     });
   });
 
   describe('getProducts function', () => {
     it('should return all products', async () => {
       // Arrange
+      const imagePath1 = 'upload/images/product-123.jpg';
       const newProduct1 = new NewProduct({
         name: 'Test Product 1',
         description: 'Test Description 1',
         price: 100000,
         stock: 50,
-      });
+      }, imagePath1);
+
+      const imagePath2 = 'upload/images/product-124.jpg';
       const newProduct2 = new NewProduct({
         name: 'Test Product 2',
         description: 'Test Description 2',
         price: 200000,
         stock: 30,
-      });
+      }, imagePath2);
       const fakeIdGenerator = () => crypto.randomBytes(10).toString('hex');
       const productRepository = new ProductRepositoryPostgres(
         pool,
@@ -163,6 +167,7 @@ describe('ProductRepositoryPostgres', () => {
         description: 'Test Description',
         price: 100000,
         stock: 50,
+        imagePath: 'image-123.jpg',
       });
       const productId = 'product-123';
       const fakeIdGenerator = () => '123';
@@ -181,6 +186,7 @@ describe('ProductRepositoryPostgres', () => {
         description: 'Test Description',
         price: 100000,
         stock: 50,
+        imagePath: 'image-123.jpg',
       });
     });
 
@@ -192,6 +198,7 @@ describe('ProductRepositoryPostgres', () => {
         description: 'Test Description dengan is_deleted true',
         price: 100000,
         stock: 50,
+        imagePath: 'image-123.jpg',
         isDeleted: true,
       });
       const fakeIdGenerator = () => '123';
@@ -211,12 +218,13 @@ describe('ProductRepositoryPostgres', () => {
   describe('updateProduct function', () => {
     it('should update product details', async () => {
       // Arrange
+      const imagePath1 = 'product-123.jpg';
       const newProduct = new NewProduct({
         name: 'Old Product',
         description: 'Old Description',
         price: 100000,
         stock: 50,
-      });
+      }, imagePath1);
       const fakeIdGenerator = () => '123';
       const productId = 'product-123';
       const productRepository = new ProductRepositoryPostgres(
@@ -226,12 +234,13 @@ describe('ProductRepositoryPostgres', () => {
 
       await productRepository.addProduct(newProduct);
 
+      const imagePath2 = 'product-124.jpg';
       const updatedProduct = new UpdatedProduct({
         name: 'Updated Product',
         description: 'Updated Description',
         price: 150000,
         stock: 20,
-      });
+      }, imagePath2);
 
       // Action
       await productRepository.updateProduct(productId, updatedProduct);
@@ -257,9 +266,10 @@ describe('ProductRepositoryPostgres', () => {
         pool,
         fakeIdGenerator,
       );
+      const image = 'product-123.jpg';
 
       // Action
-      await productRepository.deleteProductById('product-123');
+      await productRepository.deleteProductById('product-123', image);
 
       // Assert
       const product = await ProductsTableTestHelper.findProductById(

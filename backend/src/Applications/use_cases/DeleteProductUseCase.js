@@ -5,7 +5,8 @@ class DeleteProductUseCase {
 
   async execute(productId) {
     await this._productRepository.validateAvailableProduct(productId);
-    await this._productRepository.deleteProductById(productId);
+    const { imagePath } = await this._productRepository.getProductById(productId);
+    await this._productRepository.deleteProductById(productId, imagePath);
   }
 }
 

@@ -27,6 +27,7 @@ describe('DeleteProductUseCase', () => {
 
     const mockProductRepository = new ProductRepository();
     mockProductRepository.validateAvailableProduct = jest.fn().mockImplementation(() => Promise.resolve());
+    mockProductRepository.getProductById = jest.fn().mockImplementation(() => Promise.resolve({ imagePath: 'image-123.jpg' }));
     mockProductRepository.deleteProductById = jest.fn().mockImplementation(() => Promise.resolve());
 
     const deleteProductUseCase = new DeleteProductUseCase({
@@ -38,6 +39,7 @@ describe('DeleteProductUseCase', () => {
 
     // Assert
     expect(mockProductRepository.validateAvailableProduct).toHaveBeenCalledWith(productId);
-    expect(mockProductRepository.deleteProductById).toHaveBeenCalledWith(productId);
+    expect(mockProductRepository.getProductById).toHaveBeenCalledWith(productId);
+    expect(mockProductRepository.deleteProductById).toHaveBeenCalledWith(productId, 'image-123.jpg');
   });
 });
