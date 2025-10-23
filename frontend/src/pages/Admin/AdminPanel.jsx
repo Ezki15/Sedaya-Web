@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
 import Sidebar from "../../components/Admin/Sidebar";
-import ProductTable from "../../components/Admin/ProductTable";
-import ProductFormModal from "../../components/Admin/ProductFormModal";
+import ProductTable from "./Products/ProductTable";
+import ProductFormModal from "./Products/ProductFormModal";
 import api from "../../api/axios";
 
 export default function AdminPanel() {

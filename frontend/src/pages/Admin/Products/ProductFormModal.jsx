@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../../api/axios";
+import api from "../../../api/axios";
 
 export default function ProductFormModal({
   onClose,
@@ -153,13 +153,33 @@ export default function ProductFormModal({
           />
 
           {/* Input file baru */}
-          <input
+          {/* tampilkan nama file yang dipilih atau nama file lama jika di edit */}
+          <div className="mb-2 text-sm text-gray-700">
+            {form.image
+              ? `File terpilih: ${form.image.name}`
+              : isEdit && editingProduct && editingProduct.image
+              ? `File sekarang: ${editingProduct.image}`
+              : "Belum ada file dipilih"}
+          </div>
+          <div className="relative inline-block">
+            <input 
             type="file"
+            id="uploadFile" 
+            className="hidden"
             name="image"
             accept="image/*"
             onChange={handleChange}
-            className="border w-full p-2 rounded"
-          />
+             />
+            <label
+              htmlFor="uploadFile"
+              className="file-button px-4 py-2 rounded-lg text-white bg-blue-500 hover:bg-blue-700 cursor-pointer"
+            >
+              Pilih File
+            </label>
+            <span className="ml-2 text-sm text-gray-700">
+              jpg, jpeg, png, webp (Max. 2 MB).
+            </span>
+          </div>
 
           <div className="flex justify-end space-x-3">
             <button

@@ -26,7 +26,7 @@ export default function Navbar() {
             <>
               <li>
                 <Link to="/register" className="hover:underline">
-                  Register
+                  Regist
                 </Link>
               </li>
               <li>
