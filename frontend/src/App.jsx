@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 import Logout from "./pages/Authentications/Logout";
 import { AuthContext } from "./hooks/contexts/AuthContexts";
 import api from "./api/axios";
+import Products from "./pages/Products/Products";
 
 function App() {
   const [user, setUser] = useState(null); // null = belum diketahui
@@ -49,67 +50,84 @@ function App() {
   }
 
   return (
-    <Router>
-      <AuthContext.Provider value={{ user, isLogin, setUser, setIsLogin }}>
-        {!(isLogin && user?.role === "admin") && <Navbar />}
-        <Routes>
-          {/* Route publik */}
-          <Route
-            path="/register"
-            element={!isLogin ? <Register /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/login"
-            element={
-              !isLogin ? <Login setIsLogin={setIsLogin} /> : <Navigate to="/" />
-            }
-          />
+  <Router>
+    <AuthContext.Provider value={{ user, isLogin, setUser, setIsLogin }}>
+      {!(isLogin && user?.role === "admin") && <Navbar />}
+      <Routes>
+        {/* Route publik */}
+        <Route
+          path="/register"
+          element={!isLogin ? <Register /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/login"
+          element={
+            !isLogin ? <Login setIsLogin={setIsLogin} /> : <Navigate to="/" />
+          }
+        />
 
-          {/* Route private (user login) */}
-          <Route
-            path="/"
-            element={
-              isLogin && user?.role === "admin" ? (
+        {/* Route utama */}
+        <Route
+          path="/"
+          element={
+            isLogin ? (
+              user?.role === "admin" ? (
                 <Navigate to="/admin" />
               ) : (
-                <Home />
+                <Navigate to="/products" />
               )
-            }
-          />
+            ) : (
+              <Home />
+            )
+          }
+        />
 
-          {/* Route khusus admin */}
-          <Route
-            path="/admin"
-            element={
-              isLogin && user?.role === "admin" ? (
-                <AdminPanel />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
+        {/* Route user biasa (products) */}
+        <Route
+          path="/products"
+          element={
+            isLogin && user?.role !== "admin" ? (
+              <Products />
+            ) : (
+              <Navigate to={isLogin ? "/admin" : "/login"} />
+            )
+          }
+        />
 
-          {/* Logout */}
-          <Route
-            path="/logout"
-            element={<Logout setUser={setUser} setIsLogin={setIsLogin} />}
-          />
+        {/* Route khusus admin */}
+        <Route
+          path="/admin"
+          element={
+            isLogin && user?.role === "admin" ? (
+              <AdminPanel />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
 
-          {/* Catch-all redirect */}
-          <Route
-            path="*"
-            element={
-              isLogin ? (
-                <Navigate to={user?.role === "admin" ? "/admin" : "/"} />
-              ) : (
-                <Navigate to="/" />
-              )
-            }
-          />
-        </Routes>
-      </AuthContext.Provider>
-    </Router>
-  );
+        {/* Logout */}
+        <Route
+          path="/logout"
+          element={<Logout setUser={setUser} setIsLogin={setIsLogin} />}
+        />
+
+        {/* Catch-all redirect */}
+        <Route
+          path="*"
+          element={
+            isLogin ? (
+              <Navigate to={user?.role === "admin" ? "/admin" : "/products"} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+      </Routes>
+    </AuthContext.Provider>
+  </Router>
+);
+
 }
 
 export default App;

@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import cookieParser from 'cookie-parser';
 import errorHandler from '../../Interfaces/middlewares/errorHanlder.js';
 import usersRoutes from '../../Interfaces/routes/usersRoutes.js';
@@ -40,6 +41,9 @@ const createServer = async (container) => {
 
   // Error handling middleware
   server.use(errorHandler);
+
+  // Static files
+  server.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
   return server;
 };
