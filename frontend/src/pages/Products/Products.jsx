@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import api from "../../api/axios";
 import ProductsList from "./ProductsList";
+import OrderSummaryModal from "../orders/OrderSummaryModal";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [orderItems, setOrderItems] = useState([]);
+  const [showOrderModal, setShowOrderModal] = useState(false);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -20,7 +23,51 @@ export default function Products() {
   }, []);
 
   const handleAddToOrder = (product) => {
-    console.log(`${product.name} ditambahkan ke pesanan.`);
+    setOrderItems((prevItems) => {
+      const existing = prevItems.find((item) => item.id === product.id);
+      if (existing) {
+        return prevItems.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prevItems, { ...product, quantity: 1 }];
+    });
+  };
+
+  const handleRemoveItem = (id) => {
+    setOrderItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+
+  const handleQuantityChange = (id, qty) => {
+    setOrderItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(1, qty) } : item
+      )
+    );
+  };
+
+  const handleSubmitOrder = async () => {
+    try {
+      // contoh payload yang akan dikirim ke backend
+      const payload = {
+        items: orderItems.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity,
+        })),
+      };
+
+      console.log("Kirim ke backend:", payload);
+
+      // await api.post("/orders", payload, { withCredentials: true });
+      alert("Pesanan berhasil dikirim!");
+      setOrderItems([]);
+      setShowOrderModal(false);
+    } catch (error) {
+      console.error("Error creating order:", error);
+      alert("Gagal membuat pesanan!");
+    }
   };
 
   const filteredProducts = products.filter((product) =>
@@ -29,7 +76,7 @@ export default function Products() {
 
   return (
     <div className="min-h-screen py-10">
-      {/* Header: Judul + Search */}
+      {/* Header */}
       <div className="w-[75%] mx-auto mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
         <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
           🛍️ Our Products
@@ -59,7 +106,7 @@ export default function Products() {
       </div>
 
       {/* Grid Produk */}
-      <div className="w-[75%] mx-auto">
+      <div className="w-[70%] mx-auto">
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
             {filteredProducts.map((product) => (
@@ -76,6 +123,29 @@ export default function Products() {
           </p>
         )}
       </div>
+
+      {/* Tombol Buat Pesanan */}
+      {orderItems.length > 0 && (
+        <div className="fixed bottom-6 right-6">
+          <button
+            onClick={() => setShowOrderModal(true)}
+            className="bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 active:scale-95 transition-all"
+          >
+            Buat Pesanan ({orderItems.length})
+          </button>
+        </div>
+      )}
+
+      {/* Modal Ringkasan Order */}
+      {showOrderModal && (
+        <OrderSummaryModal
+          orderItems={orderItems}
+          onClose={() => setShowOrderModal(false)}
+          onRemoveItem={handleRemoveItem}
+          onQuantityChange={handleQuantityChange}
+          onSubmitOrder={handleSubmitOrder}
+        />
+      )}
     </div>
   );
 }

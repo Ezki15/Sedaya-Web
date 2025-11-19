@@ -32,7 +32,7 @@ export default function ProductsList({ product, onAddToOrder }) {
 
           <button
             onClick={() => onAddToOrder(product)}
-            className="bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg shadow hover:bg-blue-700 hover:shadow-md active:scale-95 transition-all duration-200"
+            className="bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg shadow hover:bg-blue-700 hover:shadow-md cursor-pointer active:scale-95 transition-all duration-200"
           >
             + Order
           </button>

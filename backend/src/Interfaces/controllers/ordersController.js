@@ -17,6 +17,7 @@ class OrdersController {
     const addOrderUseCase = this._container.getInstance(AddOrderUseCase.name);
     const orderPayload = req.body;
     const userId = req.auth.id;
+    console.log(orderPayload);
 
     const addedOrder = await addOrderUseCase.execute(orderPayload, userId);
     return res.status(201).json({ status: 'success', data: addedOrder });

@@ -7,6 +7,7 @@ class GetOrderUseCase {
     await this._orderRepository.validateAvailableOrder(orderId);
 
     const { orders, itemsOrder } = await this._orderRepository.getOrderById(credential);
+    // console.log('ini adalah items order', itemsOrder);
 
     const orderByUser = orders.reduce((acc, order) => {
       const orderItems = itemsOrder
